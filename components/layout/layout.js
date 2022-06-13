@@ -7,6 +7,9 @@ import {
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu } from "antd";
 import React, { useState } from "react";
+import Image from "next/image";
+import MenuKey from "./menu";
+import { useRouter } from "next/router";
 const { Header, Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -19,22 +22,41 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("Option 1", "1", <PieChartOutlined />),
-  getItem("Option 2", "2", <DesktopOutlined />),
-  getItem("User", "sub1", <UserOutlined />, [
-    getItem("Tom", "3"),
-    getItem("Bill", "4"),
-    getItem("Alex", "5"),
+  getItem("Dashboard", MenuKey.Dashboard.key, <PieChartOutlined />),
+  getItem("Loại Hàng", MenuKey.Category.key, <DesktopOutlined />),
+  getItem("Quản lý mua hàng", "sub1", <UserOutlined />, [
+    getItem("Khách hàng", MenuKey.Seller.key),
+    getItem("Mua hàng", MenuKey.Order.key),
+    getItem("Lịch sử thanh toán", MenuKey.HistoryPayment.key),
   ]),
-  getItem("Team", "sub2", <TeamOutlined />, [
-    getItem("Team 1", "6"),
-    getItem("Team 2", "8"),
-  ]),
-  getItem("Files", "9", <FileOutlined />),
+  // getItem("Team", "sub2", <TeamOutlined />, [
+  //   getItem("Team 1", "6"),
+  //   getItem("Team 2", "8"),
+  // ]),
+  // getItem("Files", "9", <FileOutlined />),
 ];
 
-const LayoutC = () => {
+const LayoutC = (props) => {
   const [collapsed, setCollapsed] = useState(false);
+  const Router = useRouter();
+
+  const handleClickMenu = (e) => {
+    switch (e.key) {
+      case MenuKey.Dashboard.key:
+        return Router.push(MenuKey.Dashboard.link);
+      case MenuKey.Category.key:
+        return Router.push(MenuKey.Category.link);
+      case MenuKey.Seller.key:
+        return Router.push(MenuKey.Seller.link);
+      case MenuKey.Order.key:
+        return Router.push(MenuKey.Order.link);
+      case MenuKey.HistoryPayment.key:
+        return Router.push(MenuKey.HistoryPayment.link);
+      default:
+        return Router.push(MenuKey.Dashboard.link);
+    }
+  };
+
   return (
     <Layout
       style={{
@@ -46,12 +68,16 @@ const LayoutC = () => {
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="logo" />
+        <div className="logo">
+          <Image src="/logo.png" width={200} height={65} />
+        </div>
         <Menu
+          onClick={handleClickMenu}
           theme="dark"
-          defaultSelectedKeys={["1"]}
+          // defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
+          
         />
       </Sider>
       <Layout className="site-layout">
@@ -71,18 +97,18 @@ const LayoutC = () => {
               margin: "16px 0",
             }}
           >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+            <Breadcrumb.Item>{props.one}</Breadcrumb.Item>
+            <Breadcrumb.Item>{props.two}</Breadcrumb.Item>
           </Breadcrumb>
-          <div
+          {/* <div
             className="site-layout-background"
             style={{
               padding: 24,
               minHeight: 360,
             }}
-          >
-            Bill is a cat.
-          </div>
+          > */}
+          {props.children}
+          {/* </div> */}
         </Content>
         <Footer
           style={{
