@@ -24,9 +24,9 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem("Dashboard", MenuKey.Dashboard.key, <PieChartOutlined />),
   getItem("Loại Hàng", MenuKey.Category.key, <DesktopOutlined />),
-  getItem("Quản lý mua hàng", "sub1", <UserOutlined />, [
+  getItem("Quản lý nhập hàng", "sub1", <UserOutlined />, [
     getItem("Khách hàng", MenuKey.Seller.key),
-    getItem("Mua hàng", MenuKey.Order.key),
+    getItem("Nhập hàng theo ngày", MenuKey.Order.key),
     getItem("Lịch sử thanh toán", MenuKey.HistoryPayment.key),
   ]),
   // getItem("Team", "sub2", <TeamOutlined />, [
@@ -77,7 +77,6 @@ const LayoutC = (props) => {
           // defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
-          
         />
       </Sider>
       <Layout className="site-layout">

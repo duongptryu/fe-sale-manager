@@ -6,16 +6,18 @@ import {
   Drawer,
   Form,
   Input,
+  InputNumber,
   Row,
   Select,
   Space,
 } from "antd";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_CREATE_VISIBLE_STATE } from "../../redux/action/category";
+import { ACT_CHANGE_CREATE_CATE_VISIBLE_STATE } from "../../redux/action/category";
 
 const PopupCreateCategory = (props) => {
   const { createVisible, onChangeVisible } = props;
+  const [bagNumber, setBagNumber] = useState(0);
   const [name, setName] = useState("");
 
   const onClose = () => {
@@ -61,6 +63,22 @@ const PopupCreateCategory = (props) => {
                 />
               </Form.Item>
             </Col>
+            <Col span={24}>
+              <Form.Item name="kg_for_bag" label="Số Kg / Túi">
+                <InputNumber
+                  value={bagNumber}
+                  formatter={(value) =>
+                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  }
+                  parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                  onChange={(e) => setBagNumber(e)}
+                  prefix="Kg"
+                  size="large"
+                  min={0}
+                  style={{ width: 200 }}
+                />
+              </Form.Item>
+            </Col>
           </Row>
         </Form>
       </Drawer>
@@ -77,7 +95,7 @@ const mapStateToProp = (state) => {
 
 const mapDispatchToProp = (dispath) => ({
   onChangeVisible: (payload) =>
-    dispath({ type: ACT_CHANGE_CREATE_VISIBLE_STATE, payload }),
+    dispath({ type: ACT_CHANGE_CREATE_CATE_VISIBLE_STATE, payload }),
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupCreateCategory);

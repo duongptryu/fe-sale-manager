@@ -12,22 +12,26 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE } from "../../redux/action/category";
+import { ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE } from "../../redux/action/seller";
 
-const PopupUpdateCategory = (props) => {
-  const { updateVisible, category, onChangeVisibleUpdate } = props;
+const { TextArea } = Input;
+
+const PopupUpdateSeller = (props) => {
+  const { updateVisible, user, onChangeVisibleUpdate } = props;
   const [name, setName] = useState("");
+  const [note, setNote] = useState("");
 
   const onClose = () => {
     onChangeVisibleUpdate({
       status: false,
-      category: null,
+      user: null,
     });
   };
+
   return (
     <>
       <Drawer
-        title="Cập nhật loại hàng"
+        title="Cập nhật người bán"
         width={450}
         onClose={onClose}
         visible={updateVisible}
@@ -46,49 +50,12 @@ const PopupUpdateCategory = (props) => {
         <Form layout="vertical" hideRequiredMark>
           <Row gutter={24}>
             <Col span={24}>
-              <p>{category?.id ?? "asdasd"}</p>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="Id"
-                label="Id"
-                initialValue={category?.id ?? "asdasd"}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            {/* <Col span={24}>
-              <Form.Item
-                name="Tên"
-                label="Name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nhập tên loại hàng",
-                  },
-                ]}
-              >
-                <Input
-                  value={name}
-                  defaultValue={
-                    category
-                      ? category.name
-                        ? category.name
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  placeholder="Nhập tên loại hàng"
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="kg_for_bag" label="Số Kg / Túi">
+              <Form.Item name="Id" label="Id">
                 <Input
                   defaultValue={
-                    category
-                      ? category.kg_for_bag
-                        ? category.kg_for_bag
+                    user
+                      ? user.id
+                        ? user.id
                         : "Không xác định"
                       : "Không xác định"
                   }
@@ -97,12 +64,67 @@ const PopupUpdateCategory = (props) => {
               </Form.Item>
             </Col>
             <Col span={24}>
+              <Form.Item
+                name="name"
+                label="Tên"
+                rules={[
+                  {
+                    required: true,
+                    message: "Nhập tên người bán",
+                  },
+                ]}
+              >
+                <Input
+                  value={name}
+                  defaultValue={
+                    user
+                      ? user.name
+                        ? user.name
+                        : "Không xác định"
+                      : "Không xác định"
+                  }
+                  placeholder="Nhập tên người bán"
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item name="phone_number" label="Số điện thoại">
+                <Input
+                  defaultValue={
+                    user
+                      ? user.phone_number
+                        ? user.phone_number
+                        : "Không xác định"
+                      : "Không xác định"
+                  }
+                  disabled={true}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item name="note" label="Ghi chú">
+                <TextArea
+                  rows={4}
+                  value={note}
+                  defaultValue={
+                    user
+                      ? user.note
+                        ? user.note
+                        : "Không xác định"
+                      : "Không xác định"
+                  }
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
               <Form.Item name="created_at" label="Ngày Tạo">
                 <Input
                   defaultValue={
-                    category
-                      ? category.created_at
-                        ? category.created_at
+                    user
+                      ? user.created_at
+                        ? user.created_at
                         : "Không xác định"
                       : "Không xác định"
                   }
@@ -114,16 +136,16 @@ const PopupUpdateCategory = (props) => {
               <Form.Item name="updated_at" label="Ngày cập nhật">
                 <Input
                   defaultValue={
-                    category
-                      ? category.updated_at
-                        ? category.updated_at
+                    user
+                      ? user.updated_at
+                        ? user.updated_at
                         : "Không xác định"
                       : "Không xác định"
                   }
                   disabled={true}
                 />
               </Form.Item>
-            </Col> */}
+            </Col>
           </Row>
         </Form>
       </Drawer>
@@ -132,16 +154,15 @@ const PopupUpdateCategory = (props) => {
 };
 
 const mapStateToProp = (state) => {
-  console.log("state-------------------------", state);
   return {
-    updateVisible: state.category.updateVisible,
-    category: state.category.category,
+    updateVisible: state.seller.updateVisible,
+    user: state.seller.user,
   };
 };
 
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleUpdate: (payload) =>
-    dispath({ type: ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE, payload }),
+    dispath({ type: ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE, payload }),
 });
 
-export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdateCategory);
+export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdateSeller);

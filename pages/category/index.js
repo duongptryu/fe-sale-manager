@@ -5,8 +5,8 @@ import PopupCreateCategory from "../../components/category/popupCreate";
 import PopupUpdateCategory from "../../components/category/popupUpdate";
 import { connect } from "react-redux";
 import {
-  ACT_CHANGE_CREATE_VISIBLE_STATE,
-  ACT_CHANGE_UPDATE_VISIBLE_STATE,
+  ACT_CHANGE_CREATE_CATE_VISIBLE_STATE,
+  ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE,
 } from "../../redux/action/category";
 
 const { Title } = Typography;
@@ -25,6 +25,11 @@ const Category = (props) => {
       key: "name",
     },
     {
+      title: "Số Kg / Túi",
+      dataIndex: "kg_for_bag",
+      key: "name",
+    },
+    {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",
@@ -39,7 +44,13 @@ const Category = (props) => {
       key: "btn-update",
       render: (data) => {
         return (
-          <Button type="primary" size="small">
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => {
+              handleUpdateBtn(data);
+            }}
+          >
             Sửa
           </Button>
         );
@@ -51,12 +62,14 @@ const Category = (props) => {
     {
       id: "1",
       name: "Mike",
+      kg_for_bag: 10,
       created_at: 32,
       updated_at: "10 Downing Street",
     },
     {
       id: "2",
       name: "John",
+      kg_for_bag: 10,
       created_at: 42,
       updated_at: "10 Downing Street",
     },
@@ -66,8 +79,11 @@ const Category = (props) => {
     onChangeVisibleCreate(true);
   };
 
-  const handleUpdateBtn = () => {
-    onChangeVisibleUpdate(true);
+  const handleUpdateBtn = (data) => {
+    onChangeVisibleUpdate({
+      status: true,
+      category: data,
+    });
   };
 
   return (
@@ -112,9 +128,9 @@ const Category = (props) => {
 
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleCreate: (payload) =>
-    dispath({ type: ACT_CHANGE_CREATE_VISIBLE_STATE, payload }),
+    dispath({ type: ACT_CHANGE_CREATE_CATE_VISIBLE_STATE, payload }),
   onChangeVisibleUpdate: (payload) =>
-    dispath({ type: ACT_CHANGE_UPDATE_VISIBLE_STATE, payload }),
+    dispath({ type: ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE, payload }),
 });
 
 export default connect(null, mapDispatchToProp)(Category);
