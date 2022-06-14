@@ -16,7 +16,7 @@ import { ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE } from "../../redux/action/categor
 
 const PopupUpdateCategory = (props) => {
   const { updateVisible, category, onChangeVisibleUpdate } = props;
-  const [name, setName] = useState("");
+  const [name, setName] = useState();
 
   const onClose = () => {
     onChangeVisibleUpdate({
@@ -24,6 +24,10 @@ const PopupUpdateCategory = (props) => {
       category: null,
     });
   };
+
+  useEffect(() => {
+    setName(category?.name ?? "Không xác định");
+  }, [category]);
   return (
     <>
       <Drawer
@@ -43,89 +47,41 @@ const PopupUpdateCategory = (props) => {
           </Space>
         }
       >
-        <Form layout="vertical" hideRequiredMark>
-          <Row gutter={24}>
-            <Col span={24}>
-              <p>{category?.id ?? "asdasd"}</p>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="Id"
-                label="Id"
-                initialValue={category?.id ?? "asdasd"}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            {/* <Col span={24}>
-              <Form.Item
-                name="Tên"
-                label="Name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nhập tên loại hàng",
-                  },
-                ]}
-              >
-                <Input
-                  value={name}
-                  defaultValue={
-                    category
-                      ? category.name
-                        ? category.name
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  placeholder="Nhập tên loại hàng"
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="kg_for_bag" label="Số Kg / Túi">
-                <Input
-                  defaultValue={
-                    category
-                      ? category.kg_for_bag
-                        ? category.kg_for_bag
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  disabled={true}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="created_at" label="Ngày Tạo">
-                <Input
-                  defaultValue={
-                    category
-                      ? category.created_at
-                        ? category.created_at
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  disabled={true}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item name="updated_at" label="Ngày cập nhật">
-                <Input
-                  defaultValue={
-                    category
-                      ? category.updated_at
-                        ? category.updated_at
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  disabled={true}
-                />
-              </Form.Item>
-            </Col> */}
-          </Row>
-        </Form>
+        <Row gutter={24}>
+          <Col span={24} style={{ marginBottom: "30px" }}>
+            <p>Id </p>
+            <Input disabled={true} value={category?.id ?? "Không xác định"} />
+          </Col>
+          <Col span={24} style={{ marginBottom: "30px" }}>
+            <p>Tên</p>
+            <Input
+              value={name}
+              placeholder="Nhập tên loại hàng"
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Col>
+          <Col span={24} style={{ marginBottom: "30px" }}>
+            <p>Số Kg / Túi</p>
+            <Input
+              value={category?.kg_for_bag ?? "Không xác định"}
+              disabled={true}
+            />
+          </Col>
+          <Col span={24} style={{ marginBottom: "30px" }}>
+            <p>Ngày Tạo</p>
+            <Input
+              value={category?.created_at ?? "Không xác định"}
+              disabled={true}
+            />
+          </Col>
+          <Col span={24} style={{ marginBottom: "30px" }}>
+            <p>Ngày cập nhật</p>
+            <Input
+              value={category?.updated_at ?? "Không xác định"}
+              disabled={true}
+            />
+          </Col>
+        </Row>
       </Drawer>
     </>
   );

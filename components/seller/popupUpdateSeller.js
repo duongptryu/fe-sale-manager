@@ -10,6 +10,7 @@ import {
   Select,
   Space,
 } from "antd";
+import { useForm } from "antd/lib/form/Form";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE } from "../../redux/action/seller";
@@ -21,12 +22,27 @@ const PopupUpdateSeller = (props) => {
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
 
+  const [form] = Form.useForm();
+
   const onClose = () => {
     onChangeVisibleUpdate({
       status: false,
       user: null,
     });
   };
+
+  useEffect(() => {
+    setName(user?.name ?? "Không xác định");
+    setNote(user?.note ?? "Không xác định");
+    form.setFieldsValue({
+      id: user?.id ?? "Không xác định",
+      name: user?.name ?? "Không xác định",
+      phone_number: user?.phone_number ?? "Không xác định",
+      note: user?.note ?? "Không xác định",
+      created_at: user?.created_at ?? "Không xác định",
+      updated_at: user?.updated_at ?? "Không xác định",
+    });
+  }, [user]);
 
   return (
     <>
@@ -47,20 +63,11 @@ const PopupUpdateSeller = (props) => {
           </Space>
         }
       >
-        <Form layout="vertical" hideRequiredMark>
+        <Form layout="vertical" hideRequiredMark form={form}>
           <Row gutter={24}>
             <Col span={24}>
-              <Form.Item name="Id" label="Id">
-                <Input
-                  defaultValue={
-                    user
-                      ? user.id
-                        ? user.id
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  disabled={true}
-                />
+              <Form.Item name="id" label="Id">
+                <Input disabled={true} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -76,13 +83,6 @@ const PopupUpdateSeller = (props) => {
               >
                 <Input
                   value={name}
-                  defaultValue={
-                    user
-                      ? user.name
-                        ? user.name
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
                   placeholder="Nhập tên người bán"
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -90,16 +90,7 @@ const PopupUpdateSeller = (props) => {
             </Col>
             <Col span={24}>
               <Form.Item name="phone_number" label="Số điện thoại">
-                <Input
-                  defaultValue={
-                    user
-                      ? user.phone_number
-                        ? user.phone_number
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  disabled={true}
-                />
+                <Input disabled={true} />
               </Form.Item>
             </Col>
             <Col span={24}>
@@ -107,43 +98,18 @@ const PopupUpdateSeller = (props) => {
                 <TextArea
                   rows={4}
                   value={note}
-                  defaultValue={
-                    user
-                      ? user.note
-                        ? user.note
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
                   onChange={(e) => setNote(e.target.value)}
                 />
               </Form.Item>
             </Col>
             <Col span={24}>
               <Form.Item name="created_at" label="Ngày Tạo">
-                <Input
-                  defaultValue={
-                    user
-                      ? user.created_at
-                        ? user.created_at
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  disabled={true}
-                />
+                <Input disabled={true} />
               </Form.Item>
             </Col>
             <Col span={24}>
               <Form.Item name="updated_at" label="Ngày cập nhật">
-                <Input
-                  defaultValue={
-                    user
-                      ? user.updated_at
-                        ? user.updated_at
-                        : "Không xác định"
-                      : "Không xác định"
-                  }
-                  disabled={true}
-                />
+                <Input disabled={true} />
               </Form.Item>
             </Col>
           </Row>

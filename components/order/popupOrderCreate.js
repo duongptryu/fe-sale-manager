@@ -42,6 +42,8 @@ const PopupCreateOrder = (props) => {
 
   const [isInputKg, setIsInputKg] = useState(false);
 
+  const [form] = Form.useForm();
+
   const onClose = () => {
     onChangeVisibleCreate({
       status: false,
@@ -49,9 +51,20 @@ const PopupCreateOrder = (props) => {
   };
 
   useEffect(() => {
-    console.log(bagNumber);
     setAmount(bagNumber * 10);
+    form.setFieldsValue({
+      amount: bagNumber * 10,
+    });
   }, [bagNumber]);
+
+  useEffect(() => {
+    setAmount(0);
+    setBagNumber(0);
+    form.setFieldsValue({
+      amount: 0,
+      bag_number: 0,
+    });
+  }, [isInputKg]);
 
   return (
     <>
@@ -73,7 +86,7 @@ const PopupCreateOrder = (props) => {
           </Space>
         }
       >
-        <Form layout="vertical" hideRequiredMark>
+        <Form layout="vertical" hideRequiredMark form={form}>
           <Row gutter={24}>
             <Col span={6}>
               <Form.Item name="name" label="Tên người bán">

@@ -97,9 +97,9 @@ const Order = (props) => {
       key: "is_payment",
       render: (data) => {
         if (data) {
-          return <Tag color="#cd201f">Chưa thanh toán</Tag>;
-        } else {
           return <Tag color="#2db7f5">Đã thanh toán</Tag>;
+        } else {
+          return <Tag color="#cd201f">Chua thanh toán</Tag>;
         }
       },
     },
