@@ -15,10 +15,6 @@ const MenuKey = {
     key: "4",
     link: "/order",
   },
-  HistoryPayment: {
-    key: "5",
-    link: "/history",
-  },
 };
 
 export default MenuKey;

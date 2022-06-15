@@ -23,9 +23,7 @@ import {
   ACT_CHANGE_CREATE_ORDER_VISIBLE_STATE,
   ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
 } from "../../redux/action/order";
-import { useRouter } from "next/router";
 import PopupOrderCreate from "../../components/order/popupOrderCreate";
-// import locale from "antd/es/date-picker/locale/vi_VN";
 
 const { Title } = Typography;
 const { Option } = Select;

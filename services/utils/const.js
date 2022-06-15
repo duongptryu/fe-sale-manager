@@ -12,3 +12,5 @@ export function getToken() {
 export function setToken(newToken) {
   localStorage.setItem("token", newToken);
 }
+
+export const dateFormat = "DD/MM/YYYY";

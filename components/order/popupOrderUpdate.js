@@ -45,7 +45,6 @@ const PopupUpdateOrder = (props) => {
     setIsPayment(order?.is_payment ?? false);
     setNote(order?.note ?? "");
     setBagNumber(order?.bag_number ?? "");
-    console.log(price);
     form.setFieldsValue({
       id: order?.id ?? "Không xác định",
       name: order?.name ?? "Không xác định",
@@ -211,6 +210,7 @@ const PopupUpdateOrder = (props) => {
                   filterOption={(input, option) =>
                     option.children.toLowerCase().includes(input.toLowerCase())
                   }
+                  disabled={true}
                 >
                   <Option value={true}>Đã thanh toán</Option>
                   <Option value={false}>Chưa thanh toán</Option>

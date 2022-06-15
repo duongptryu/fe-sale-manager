@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -5,19 +6,19 @@ import {
   Drawer,
   Form,
   Input,
+  InputNumber,
   Row,
   Select,
   Space,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE } from "../../redux/action/seller";
+import { ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE } from "../../redux/action/payment";
 
 const { TextArea } = Input;
 
-const PopupUpdateSeller = (props) => {
-  const { updateVisible, user, onChangeVisibleUpdate } = props;
-  const [name, setName] = useState("");
+const PopupUpdatePayment = (props) => {
+  const { updateVisible, payment, onChangeVisibleUpdate } = props;
   const [note, setNote] = useState("");
 
   const [form] = Form.useForm();
@@ -25,27 +26,27 @@ const PopupUpdateSeller = (props) => {
   const onClose = () => {
     onChangeVisibleUpdate({
       status: false,
-      user: null,
     });
   };
 
   useEffect(() => {
-    setName(user?.name ?? "Không xác định");
-    setNote(user?.note ?? "Không xác định");
+    setNote(payment?.note ?? "Không xác định");
     form.setFieldsValue({
-      id: user?.id ?? "Không xác định",
-      name: user?.name ?? "Không xác định",
-      phone_number: user?.phone_number ?? "Không xác định",
-      note: user?.note ?? "Không xác định",
-      created_at: user?.created_at ?? "Không xác định",
-      updated_at: user?.updated_at ?? "Không xác định",
+      id: payment?.id ?? "Không xác định",
+      list_sale_id: payment?.list_sale_id ?? "Không xác định",
+      amount: payment?.amount ?? 0,
+      total_money: payment?.total_money ?? 0,
+      note: payment?.note ?? "Không xác định",
+      payment_date: payment?.payment_date ?? "Không xác định",
+      created_at: payment?.created_at ?? "Không xác định",
+      updated_at: payment?.updated_at ?? "Không xác định",
     });
-  }, [user]);
+  }, [payment]);
 
   return (
     <>
       <Drawer
-        title="Cập nhật người bán"
+        title="Cập nhật ghi chú"
         width={450}
         onClose={onClose}
         visible={updateVisible}
@@ -69,28 +70,34 @@ const PopupUpdateSeller = (props) => {
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item
-                name="name"
-                label="Tên"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nhập tên người bán",
-                  },
-                ]}
-              >
-                <Input
-                  value={name}
-                  placeholder="Nhập tên người bán"
-                  onChange={(e) => setName(e.target.value)}
+              <Form.Item name="list_sale_id" label="Danh sách id">
+                <Input disabled={true} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item name="amount" label="Tổng cân">
+                <InputNumber
+                  disabled={true}
+                  prefix="Kg"
+                  style={{ width: 200 }}
                 />
               </Form.Item>
             </Col>
             <Col span={24}>
-              <Form.Item name="phone_number" label="Số điện thoại">
+              <Form.Item name="total_money" label="Tổng tiền">
+                <InputNumber
+                  disabled={true}
+                  prefix="VND"
+                  style={{ width: 200 }}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item name="payment_date" label="Ngày thanh toán">
                 <Input disabled={true} />
               </Form.Item>
             </Col>
+
             <Col span={24}>
               <Form.Item name="note" label="Ghi chú">
                 <TextArea
@@ -119,14 +126,14 @@ const PopupUpdateSeller = (props) => {
 
 const mapStateToProp = (state) => {
   return {
-    updateVisible: state.seller.updateVisible,
-    user: state.seller.user,
+    updateVisible: state.payment.updateVisible,
+    payment: state.payment.payment,
   };
 };
 
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleUpdate: (payload) =>
-    dispath({ type: ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE, payload }),
+    dispath({ type: ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE, payload }),
 });
 
-export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdateSeller);
+export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdatePayment);

@@ -9,6 +9,7 @@ import {
   ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE,
 } from "../../redux/action/seller";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 const { Title } = Typography;
 
@@ -20,6 +21,7 @@ const Seller = (props) => {
     pageSize: 10,
     total: 200,
   });
+  const Router = useRouter();
 
   const columns = [
     {
@@ -57,13 +59,28 @@ const Seller = (props) => {
       key: "btn-update",
       render: (data) => {
         return (
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => handleUpdateBtn(data)}
-          >
-            Sửa
-          </Button>
+          <>
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => handleUpdateBtn(data)}
+              style={{
+                marginRight: "10px",
+              }}
+            >
+              Sửa
+            </Button>
+            <Button
+              type="primary"
+              danger
+              size="small"
+              onClick={() => {
+                Router.push(`/seller/${data.id}`);
+              }}
+            >
+              Xem
+            </Button>
+          </>
         );
       },
     },

@@ -1,18 +1,25 @@
-import { Breadcrumb, Layout } from "antd";
+import React from "react";
+import { Breadcrumb, Layout, Menu } from "antd";
+import "antd/dist/antd.css";
+import {
+  FileOutlined,
+  PieChartOutlined,
+  UserOutlined,
+  DesktopOutlined,
+  TeamOutlined,
+  VideoCameraOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import { useState } from "react";
+import Sider from "antd/lib/layout/Sider";
 const { Header, Content, Footer } = Layout;
 
-const LayoutC = (props) => {
+const LayoutC = ({ children, one, two }) => {
   return (
-    <Layout className="site-layout">
-      <Header
-        className="site-layout-background"
-        style={{
-          padding: 0,
-        }}
-      />
+    <>
       <Content
         style={{
-          margin: "0 16px",
+          padding: "0 50px",
         }}
       >
         <Breadcrumb
@@ -20,27 +27,18 @@ const LayoutC = (props) => {
             margin: "16px 0",
           }}
         >
-          <Breadcrumb.Item>{props.one}</Breadcrumb.Item>
-          <Breadcrumb.Item>{props.two}</Breadcrumb.Item>
+          <Breadcrumb.Item>{one}</Breadcrumb.Item>
+          <Breadcrumb.Item>{two}</Breadcrumb.Item>
+          {/* <Breadcrumb.Item>App</Breadcrumb.Item> */}
         </Breadcrumb>
-        {/* <div
-            className="site-layout-background"
-            style={{
-              padding: 24,
-              minHeight: 360,
-            }}
-          > */}
-        {props.children}
-        {/* </div> */}
+        <div className="site-layout-content"> {children}</div>
       </Content>
       <Footer
         style={{
           textAlign: "center",
         }}
-      >
-        Ant Design ©2018 Created by Ant UED
-      </Footer>
-    </Layout>
+      ></Footer>
+    </>
   );
 };
 
