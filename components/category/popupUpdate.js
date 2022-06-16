@@ -6,22 +6,40 @@ import {
   Drawer,
   Form,
   Input,
+  notification,
   Row,
   Select,
   Space,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE } from "../../redux/action/category";
+import {
+  ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE,
+  ACT_UPDATE_CATEGORY_REQUEST,
+} from "../../redux/action/category";
+import { getToken } from "../../services/utils/const";
 
 const PopupUpdateCategory = (props) => {
-  const { updateVisible, category, onChangeVisibleUpdate } = props;
+  const {
+    updateVisible,
+    category,
+    onChangeVisibleUpdate,
+    onUpdateCategory,
+  } = props;
   const [name, setName] = useState();
 
   const onClose = () => {
     onChangeVisibleUpdate({
       status: false,
       category: null,
+    });
+  };
+
+  const handleUpdateCategory = () => {
+    onUpdateCategory({
+      id: category?.id ?? 0,
+      name: name,
+      token: getToken(),
     });
   };
 
@@ -41,7 +59,7 @@ const PopupUpdateCategory = (props) => {
         extra={
           <Space>
             <Button onClick={onClose}>Hủy</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={handleUpdateCategory} type="primary">
               Cập nhật
             </Button>
           </Space>
@@ -88,7 +106,6 @@ const PopupUpdateCategory = (props) => {
 };
 
 const mapStateToProp = (state) => {
-  console.log("state-------------------------", state);
   return {
     updateVisible: state.category.updateVisible,
     category: state.category.category,
@@ -98,6 +115,12 @@ const mapStateToProp = (state) => {
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleUpdate: (payload) =>
     dispath({ type: ACT_CHANGE_UPDATE_CATE_VISIBLE_STATE, payload }),
+  onUpdateCategory: (payload) => {
+    dispath({
+      type: ACT_UPDATE_CATEGORY_REQUEST,
+      payload,
+    });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdateCategory);

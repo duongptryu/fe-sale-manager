@@ -1,4 +1,4 @@
-import { Col, Divider, Row } from "antd";
+import { Col, Divider, PageHeader, Row } from "antd";
 import PopupUpdateOrder from "../../components/order/popupOrderUpdate";
 import PopupUpdatePayment from "../../components/sellerDetail/popupUpdatePayment";
 import LayoutC from "../../components/layout/layout";
@@ -8,10 +8,17 @@ import PersionSeller from "../../components/sellerDetail/persional";
 import TotalStatistic from "../../components/sellerDetail/statistic";
 import TableSell from "../../components/sellerDetail/tableSell";
 import TablePayment from "../../components/sellerDetail/tablePayment";
+import { Router, useRouter } from "next/router";
 
 const DetailSeller = (props) => {
+  const Router = useRouter();
   return (
     <LayoutC one={"/ Người bán"} two="Chi tiết">
+      <PageHeader
+        className="site-page-header"
+        onBack={() => Router.push("/seller")}
+        title="Quay lại"
+      />
       <Divider plain orientation="left">
         Thông tin cá nhân
       </Divider>

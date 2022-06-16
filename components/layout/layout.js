@@ -1,20 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Breadcrumb, Layout, Menu } from "antd";
 import "antd/dist/antd.css";
-import {
-  FileOutlined,
-  PieChartOutlined,
-  UserOutlined,
-  DesktopOutlined,
-  TeamOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import { useState } from "react";
-import Sider from "antd/lib/layout/Sider";
+import { useRouter } from "next/router";
+import { getToken } from "../../services/utils/const";
 const { Header, Content, Footer } = Layout;
 
 const LayoutC = ({ children, one, two }) => {
+  const Router = useRouter();
+
+  useEffect(() => {
+    if (getToken() == "") {
+      Router.push("/auth/login");
+    }
+  }, []);
+
   return (
     <>
       <Content

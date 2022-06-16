@@ -3,6 +3,7 @@ import {
   Col,
   DatePicker,
   Input,
+  notification,
   Popconfirm,
   Row,
   Select,
@@ -16,27 +17,88 @@ import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { connect } from "react-redux";
 import LayoutC from "../../components/layout/layout";
-import { useState } from "react";
-import formatNumber from "../../services/utils/number";
+import { useEffect, useState } from "react";
+import { formatNumber } from "../../services/utils/number";
 import PopupUpdateOrder from "../../components/order/popupOrderUpdate";
 import {
   ACT_CHANGE_CREATE_ORDER_VISIBLE_STATE,
+  ACT_CHANGE_ORDER_NOTI,
   ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
+  ACT_GET_ORDER_REQUEST,
 } from "../../redux/action/order";
 import PopupOrderCreate from "../../components/order/popupOrderCreate";
+import { ACT_GET_SELLER_WITHOUT_PAGING_REQUEST } from "../../redux/action/seller";
+import { getToken } from "../../services/utils/const";
+import { ACT_GET_CATEGORY_REQUEST } from "../../redux/action/category";
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const dateFormat = "DD/MM/YYYY";
+const dateFormatSearch = "YYYY-MM-DD";
 
 const Order = (props) => {
   var today = new Date();
-  const { onChangeOrderVisibleCreate, onChangeOrderVisibleUpdate, loading } =
-    props;
-  const [date, setDate] = useState(moment(today).format(dateFormat));
+  const {
+    onChangeOrderVisibleCreate,
+    onChangeOrderVisibleUpdate,
+    onGetAllSeller,
+    onGetAllCategory,
+    onGetOrder,
+    loading,
+    orders,
+    err,
+    noti,
+    sellers,
+    categories,
+    onChangeOrderNoti,
+  } = props;
+  const [date, setDate] = useState(today);
   const [name, setName] = useState("");
   const [cateId, setCateId] = useState(null);
+  const [dataSource, setDataSource] = useState([]);
+
+  //Get seller
+  useEffect(() => {
+    onGetOrder({
+      token: getToken(),
+    });
+    onGetAllSeller({
+      token: getToken(),
+    });
+    onGetAllCategory({
+      token: getToken(),
+    });
+  }, []);
+
+  useEffect(() => {
+    setDataSource(orders);
+  }, [orders]);
+
+  useEffect(() => {
+    if (err != "") {
+      return notification.error({
+        message: err,
+      });
+    }
+  }, [err]);
+
+  useEffect(() => {
+    if (noti != "") {
+      return notification.success({
+        message: noti,
+      });
+    }
+  }, [noti]);
+
+  const onSearch = () => {
+    onGetOrder({
+      name: name,
+      cate_id: cateId,
+      date: moment(new Date(date)).format(dateFormat),
+      token: getToken(),
+    });
+  };
 
   const columns = [
     {
@@ -48,18 +110,24 @@ const Order = (props) => {
     },
     {
       title: "Tên người bán",
-      dataIndex: "name",
       key: "name",
+      render: (data) => {
+        return data.user.name;
+      },
     },
     {
       title: "Số điện thoại",
-      dataIndex: "phone_number",
       key: "phone_number",
+      render: (data) => {
+        return data.user.phone_number;
+      },
     },
     {
       title: "Thể loại",
-      dataIndex: "category_name",
       key: "category_name",
+      render: (data) => {
+        return data.category.name;
+      },
     },
     {
       title: "Giá / Kg",
@@ -135,31 +203,6 @@ const Order = (props) => {
     },
   ];
 
-  const dataSource = [
-    {
-      id: "1",
-      name: "Duong",
-      phone_number: "0969360916",
-      category_name: "susu an",
-      price: 2400,
-      amount: 300,
-      bag_number: 200,
-      is_payment: false,
-      note: "abcxyz",
-    },
-    {
-      id: "2",
-      name: "Duong123",
-      phone_number: "0969360916",
-      category_name: "susu giong",
-      price: 5000,
-      amount: 300,
-      bag_number: 300,
-      is_payment: false,
-      note: "abcxyz",
-    },
-  ];
-
   const handleCreateBtn = () => {
     onChangeOrderVisibleCreate({
       status: true,
@@ -173,12 +216,10 @@ const Order = (props) => {
     });
   };
 
-  const onSearch = () => {};
-
   const onReset = () => {
     setName("");
     setCateId(null);
-    setDate(moment(today).format(dateFormat));
+    setDate(today);
   };
 
   return (
@@ -207,31 +248,29 @@ const Order = (props) => {
             </Col>
             <Col span={6} offset={1}>
               <Select
+                style={{ width: 200 }}
                 size="large"
                 showSearch
                 placeholder="Chọn thể loại"
                 optionFilterProp="children"
                 onChange={(v) => setCateId(v)}
-                defaultValue={cateId}
-                value={cateId}
                 filterOption={(input, option) =>
                   option.children.toLowerCase().includes(input.toLowerCase())
                 }
               >
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-                <Option value="tom">Tom</Option>
+                <Option value="0">Tất cả</Option>;
+                {categories &&
+                  categories.map((e) => {
+                    return <Option value={e.id}>{e.name}</Option>;
+                  })}
               </Select>
             </Col>
             <Col span={4} offset={1}>
               <DatePicker
-                defaultValue={moment(date, dateFormat)}
-                // locale={locale}
+                defaultValue={moment(today, dateFormat)}
                 format={dateFormat}
                 size="large"
-                value={moment(date, dateFormat)}
                 onChange={(e) => {
-                  console.log(e);
                   setDate(e);
                 }}
               />
@@ -290,6 +329,11 @@ const Order = (props) => {
 const mapStateToProp = (state) => {
   return {
     loading: state.order.loading,
+    orders: state.order.orders,
+    noti: state.order.noti,
+    err: state.order.err,
+    sellers: state.order.sellers,
+    categories: state.category.categories,
   };
 };
 
@@ -298,6 +342,13 @@ const mapDispatchToProp = (dispath) => ({
     dispath({ type: ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE, payload }),
   onChangeOrderVisibleCreate: (payload) =>
     dispath({ type: ACT_CHANGE_CREATE_ORDER_VISIBLE_STATE, payload }),
+  onGetAllSeller: (payload) =>
+    dispath({ type: ACT_GET_SELLER_WITHOUT_PAGING_REQUEST, payload }),
+  onGetAllCategory: (payload) =>
+    dispath({ type: ACT_GET_CATEGORY_REQUEST, payload }),
+  onGetOrder: (payload) => {
+    dispath({ type: ACT_GET_ORDER_REQUEST, payload });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(Order);

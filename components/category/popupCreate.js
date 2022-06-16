@@ -7,21 +7,34 @@ import {
   Form,
   Input,
   InputNumber,
+  notification,
   Row,
   Select,
   Space,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_CREATE_CATE_VISIBLE_STATE } from "../../redux/action/category";
+import {
+  ACT_CHANGE_CREATE_CATE_VISIBLE_STATE,
+  ACT_CREATE_CATEGORY_REQUEST,
+} from "../../redux/action/category";
+import { getToken } from "../../services/utils/const";
 
 const PopupCreateCategory = (props) => {
-  const { createVisible, onChangeVisible } = props;
-  const [bagNumber, setBagNumber] = useState(0);
+  const { createVisible, onChangeVisible, onCreateCategory } = props;
+  const [kgForBag, setKgForBag] = useState(0);
   const [name, setName] = useState("");
 
   const onClose = () => {
     onChangeVisible(false);
+  };
+
+  const onCreate = () => {
+    onCreateCategory({
+      name: name,
+      kg_for_bag: kgForBag,
+      token: getToken(),
+    });
   };
 
   return (
@@ -37,7 +50,7 @@ const PopupCreateCategory = (props) => {
         extra={
           <Space>
             <Button onClick={onClose}>Hủy</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={onCreate} type="primary">
               Tạo
             </Button>
           </Space>
@@ -66,12 +79,12 @@ const PopupCreateCategory = (props) => {
             <Col span={24}>
               <Form.Item name="kg_for_bag" label="Số Kg / Túi">
                 <InputNumber
-                  value={bagNumber}
+                  value={kgForBag}
                   formatter={(value) =>
                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   }
                   parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                  onChange={(e) => setBagNumber(e)}
+                  onChange={(e) => setKgForBag(e)}
                   prefix="Kg"
                   size="large"
                   min={0}
@@ -87,7 +100,6 @@ const PopupCreateCategory = (props) => {
 };
 
 const mapStateToProp = (state) => {
-  console.log(state);
   return {
     createVisible: state.category.createVisible,
   };
@@ -96,6 +108,9 @@ const mapStateToProp = (state) => {
 const mapDispatchToProp = (dispath) => ({
   onChangeVisible: (payload) =>
     dispath({ type: ACT_CHANGE_CREATE_CATE_VISIBLE_STATE, payload }),
+  onCreateCategory: (payload) => {
+    dispath({ type: ACT_CREATE_CATEGORY_REQUEST, payload });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupCreateCategory);

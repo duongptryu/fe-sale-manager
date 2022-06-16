@@ -11,12 +11,16 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE } from "../../redux/action/seller";
+import {
+  ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE,
+  ACT_UPDATE_SELLER_REQUEST,
+} from "../../redux/action/seller";
+import { getToken } from "../../services/utils/const";
 
 const { TextArea } = Input;
 
 const PopupUpdateSeller = (props) => {
-  const { updateVisible, user, onChangeVisibleUpdate } = props;
+  const { updateVisible, user, onChangeVisibleUpdate, onUpdateSeller } = props;
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
 
@@ -26,6 +30,15 @@ const PopupUpdateSeller = (props) => {
     onChangeVisibleUpdate({
       status: false,
       user: null,
+    });
+  };
+
+  const onUpdate = () => {
+    onUpdateSeller({
+      id: user?.id ?? 0,
+      name: name,
+      note: note,
+      token: getToken(),
     });
   };
 
@@ -55,7 +68,7 @@ const PopupUpdateSeller = (props) => {
         extra={
           <Space>
             <Button onClick={onClose}>Hủy</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={onUpdate} type="primary">
               Cập nhật
             </Button>
           </Space>
@@ -127,6 +140,12 @@ const mapStateToProp = (state) => {
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleUpdate: (payload) =>
     dispath({ type: ACT_CHANGE_UPDATE_SELLER_VISIBLE_STATE, payload }),
+  onUpdateSeller: (payload) => {
+    dispath({
+      type: ACT_UPDATE_SELLER_REQUEST,
+      payload,
+    });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdateSeller);

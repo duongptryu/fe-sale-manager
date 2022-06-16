@@ -19,8 +19,10 @@ import moment from "moment";
 import {
   ACT_CHANGE_CREATE_ORDER_VISIBLE_STATE,
   ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
+  ACT_CREATE_ORDER_REQUEST,
 } from "../../redux/action/order";
-import formatNumber from "../../services/utils/number";
+import { formatNumber } from "../../services/utils/number";
+import { getToken } from "../../services/utils/const";
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -30,8 +32,14 @@ const dateFormat = "DD/MM/YYYY";
 
 const PopupCreateOrder = (props) => {
   var today = new Date();
-  const [date, setDate] = useState(moment(today).format(dateFormat));
-  const { createVisible, onChangeVisibleCreate } = props;
+  const [date, setDate] = useState(today);
+  const {
+    createVisible,
+    onChangeVisibleCreate,
+    onCreateOrder,
+    sellers,
+    categories,
+  } = props;
   const [price, setPrice] = useState(0);
   const [amount, setAmount] = useState(0);
   const [cateId, setCateId] = useState(0);
@@ -66,6 +74,20 @@ const PopupCreateOrder = (props) => {
     });
   }, [isInputKg]);
 
+  const onCreate = () => {
+    onCreateOrder({
+      user_id: userId,
+      cate_id: cateId,
+      is_payment: isPayment,
+      amount: amount,
+      bag_number: bagNumber,
+      note: note,
+      price: price,
+      date: moment(new Date(date)).format(dateFormat),
+      token: getToken(),
+    });
+  };
+
   return (
     <>
       <Drawer
@@ -80,7 +102,7 @@ const PopupCreateOrder = (props) => {
         extra={
           <Space>
             <Button onClick={onClose}>Hủy</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={onCreate} type="primary">
               Tạo
             </Button>
           </Space>
@@ -96,14 +118,18 @@ const PopupCreateOrder = (props) => {
                   placeholder="Tên người bán"
                   optionFilterProp="children"
                   onChange={(v) => setUserId(v)}
-                  value={userId}
                   filterOption={(input, option) =>
                     option.children.toLowerCase().includes(input.toLowerCase())
                   }
                 >
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="tom">Tom</Option>
+                  {sellers &&
+                    sellers.map((e) => {
+                      return (
+                        <Option value={e.id}>
+                          {e.name + " [" + e.phone_number + "]"}
+                        </Option>
+                      );
+                    })}
                 </Select>
               </Form.Item>
             </Col>
@@ -120,9 +146,10 @@ const PopupCreateOrder = (props) => {
                     option.children.toLowerCase().includes(input.toLowerCase())
                   }
                 >
-                  <Option value="jack">Jack</Option>
-                  <Option value="lucy">Lucy</Option>
-                  <Option value="tom">Tom</Option>
+                  {categories &&
+                    categories.map((e) => {
+                      return <Option value={e.id}>{e.name}</Option>;
+                    })}
                 </Select>
               </Form.Item>
             </Col>
@@ -211,23 +238,21 @@ const PopupCreateOrder = (props) => {
                     option.children.toLowerCase().includes(input.toLowerCase())
                   }
                 >
-                  <Option value="true">
-                    <Tag color="#87d068">Đã thanh toán </Tag>
-                  </Option>
-                  <Option value="false">
+                  <Option value={false}>
                     <Tag color="#cd201f">Chưa thanh toán</Tag>
+                  </Option>
+                  <Option value={true}>
+                    <Tag color="#87d068">Đã thanh toán </Tag>
                   </Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col span={10} offset={1}>
-              <Form.Item name="date" label="Ngày bán">
+              <Form.Item name="date" label="Ngày mua">
                 <DatePicker
-                  defaultValue={moment(date, dateFormat)}
-                  // locale={locale}
+                  defaultValue={moment(today, dateFormat)}
                   format={dateFormat}
                   size="large"
-                  value={moment(date, dateFormat)}
                   onChange={(e) => {
                     setDate(e);
                   }}
@@ -254,12 +279,17 @@ const PopupCreateOrder = (props) => {
 const mapStateToProp = (state) => {
   return {
     createVisible: state.order.createVisible,
+    sellers: state.order.sellers,
+    categories: state.category.categories,
   };
 };
 
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleCreate: (payload) =>
     dispath({ type: ACT_CHANGE_CREATE_ORDER_VISIBLE_STATE, payload }),
+  onCreateOrder: (payload) => {
+    dispath({ type: ACT_CREATE_ORDER_REQUEST, payload });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupCreateOrder);

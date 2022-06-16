@@ -21,7 +21,7 @@ const LoginForm = (props) => {
   const Router = useRouter();
   useEffect(() => {
     const tokenD = localStorage.getItem("token") || "";
-    console.log(tokenD);
+
     if (tokenD != "") {
       return Router.push("/dashboard");
     }
@@ -66,7 +66,7 @@ const LoginForm = (props) => {
               >
                 <Title className="mb-15">Sign In</Title>
                 <Title className="font-regular text-muted" level={5}>
-                  Enter your username and password to sign in
+                  Nhập tên đăng nhập và mật khẩu
                 </Title>
                 <Form
                   // onFinish={onFinish}
@@ -76,30 +76,30 @@ const LoginForm = (props) => {
                 >
                   <Form.Item
                     className="username"
-                    label="Username"
+                    label="Tên đăng nhập"
                     name="username"
                     rules={[
                       {
                         required: true,
-                        message: "Please input your username!",
+                        message: "Vui lòng nhập tên đăng nhập",
                       },
                     ]}
                   >
                     <Input
                       value={username}
-                      placeholder="Username"
+                      placeholder="Tên đăng nhập"
                       onChange={(e) => setUsername(e.target.value)}
                     />
                   </Form.Item>
 
                   <Form.Item
                     className="username"
-                    label="Password"
+                    label="Mật khẩu"
                     name="password"
                     rules={[
                       {
                         required: true,
-                        message: "Please input your password!",
+                        message: "Vui lòng nhập mật khẩu",
                       },
                     ]}
                   >
@@ -110,13 +110,6 @@ const LoginForm = (props) => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </Form.Item>
-
-                  <Form.Item
-                    name="remember"
-                    className="aligin-center"
-                    valuePropName="checked"
-                  ></Form.Item>
-
                   <Form.Item>
                     <Button
                       type="primary"
@@ -125,7 +118,7 @@ const LoginForm = (props) => {
                       // loading={loading}
                       onClick={handleLogin}
                     >
-                      SIGN IN
+                      ĐĂNG NHẬP
                     </Button>
                   </Form.Item>
                 </Form>

@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE } from "../../redux/action/order";
-import formatNumber from "../../services/utils/number";
+import { formatNumber } from "../../services/utils/number";
 
 const { TextArea } = Input;
 const { Option } = Select;

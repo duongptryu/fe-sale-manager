@@ -9,20 +9,33 @@ import {
   Select,
   Space,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_CREATE_SELLER_VISIBLE_STATE } from "../../redux/action/seller";
+import {
+  ACT_CHANGE_CREATE_SELLER_VISIBLE_STATE,
+  ACT_CREATE_SELLER_REQUEST,
+} from "../../redux/action/seller";
+import { getToken } from "../../services/utils/const";
 
 const { TextArea } = Input;
 
 const PopupCreateSeller = (props) => {
-  const { createVisible, onChangeVisible } = props;
+  const { createVisible, onChangeVisible, onCreateSeller } = props;
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [note, setNote] = useState("");
 
   const onClose = () => {
     onChangeVisible(false);
+  };
+
+  const onCreate = () => {
+    onCreateSeller({
+      name: name,
+      phone_number: phoneNumber,
+      note: note,
+      token: getToken(),
+    });
   };
 
   return (
@@ -38,7 +51,7 @@ const PopupCreateSeller = (props) => {
         extra={
           <Space>
             <Button onClick={onClose}>Hủy</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={onCreate} type="primary">
               Tạo
             </Button>
           </Space>
@@ -113,7 +126,6 @@ const PopupCreateSeller = (props) => {
 };
 
 const mapStateToProp = (state) => {
-  console.log(state);
   return {
     createVisible: state.seller.createVisible,
   };
@@ -122,6 +134,9 @@ const mapStateToProp = (state) => {
 const mapDispatchToProp = (dispath) => ({
   onChangeVisible: (payload) =>
     dispath({ type: ACT_CHANGE_CREATE_SELLER_VISIBLE_STATE, payload }),
+  onCreateSeller: (payload) => {
+    dispath({ type: ACT_CREATE_SELLER_REQUEST, payload });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupCreateSeller);

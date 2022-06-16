@@ -6,7 +6,7 @@ import {
 
 import { takeEvery } from "redux-saga/effects";
 import { apiCall } from "./sagaUtil";
-import { authPostAPI } from "../../services/axios/auth";
+import { authPostAPI } from "../../services/axios/axios";
 
 export const watcherAuth = [
   takeEvery(

@@ -1,3 +1,9 @@
+import { setToken } from "../../services/utils/const";
+
+const handleLogout = () => {
+  setToken("");
+};
+
 const MenuKey = {
   Dashboard: {
     key: "1",
@@ -14,6 +20,10 @@ const MenuKey = {
   Order: {
     key: "4",
     link: "/order",
+  },
+  Logout: {
+    key: "5",
+    handle: handleLogout,
   },
 };
 
