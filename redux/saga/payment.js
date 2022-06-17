@@ -5,6 +5,12 @@ import {
   ACT_CREATE_PAYMENT_FAILURE,
   ACT_CREATE_PAYMENT_REQUEST,
   ACT_CREATE_PAYMENT_SUCCESS,
+  ACT_GET_PAYMENT_WITHOUT_PAGING_FAILURE,
+  ACT_GET_PAYMENT_WITHOUT_PAGING_REQUEST,
+  ACT_GET_PAYMENT_WITHOUT_PAGING_SUCCESS,
+  ACT_UPDATE_PAYMENT_FAILURE,
+  ACT_UPDATE_PAYMENT_REQUEST,
+  ACT_UPDATE_PAYMENT_SUCCESS,
 } from "../action/payment";
 
 const paymentGateway = "/payment";
@@ -18,24 +24,36 @@ export const watcherPayment = [
       ACT_CREATE_PAYMENT_FAILURE
     )
   ),
+  takeEvery(
+    ACT_GET_PAYMENT_WITHOUT_PAGING_REQUEST,
+    apiCall(
+      getOrderWithoutPayment,
+      ACT_GET_PAYMENT_WITHOUT_PAGING_SUCCESS,
+      ACT_GET_PAYMENT_WITHOUT_PAGING_FAILURE
+    )
+  ),
+  takeEvery(
+    ACT_UPDATE_PAYMENT_REQUEST,
+    apiCall(
+      updatePaymentHistory,
+      ACT_UPDATE_PAYMENT_SUCCESS,
+      ACT_UPDATE_PAYMENT_FAILURE
+    )
+  ),
 ];
 
-// function getOrder(action) {
-//   return getAPI(
-//     paymentGateway,
-//     {
-//       name: action.payload.name ?? "",
-//       cate_id: action.payload.cate_id ?? 0,
-//       date: action.payload.date ?? "",
-//       user_id: action.payload.user_id ?? 0,
-//       from_date: action.payload.from_date ?? "",
-//       to_date: action.payload.to_date ?? "",
-//       page: action.payload.page ?? 1,
-//       limit: action.payload.limit ?? 10,
-//     },
-//     action.payload.token
-//   );
-// }
+function getOrderWithoutPayment(action) {
+  return getAPI(
+    paymentGateway + "/without-paging",
+    {
+      cate_id: action.payload.cate_id ?? 0,
+      user_id: action.payload.user_id ?? 0,
+      from_date: action.payload.from_date ?? "",
+      to_date: action.payload.to_date ?? "",
+    },
+    action.payload.token
+  );
+}
 
 // function getOrderWithoutPaging(action) {
 //   return getAPI(
@@ -53,14 +71,14 @@ export const watcherPayment = [
 //   );
 // }
 
-// function updateOrder(action) {
-//   return patchAPI(
-//     paymentGateway,
-//     action.payload.id,
-//     action.payload,
-//     action.payload.token
-//   );
-// }
+function updatePaymentHistory(action) {
+  return patchAPI(
+    paymentGateway,
+    action.payload.id,
+    action.payload,
+    action.payload.token
+  );
+}
 
 function createPayment(action) {
   return postAPI(paymentGateway, action.payload, action.payload.token);

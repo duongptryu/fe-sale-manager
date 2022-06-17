@@ -1,4 +1,4 @@
-import { Col, Divider, PageHeader, Row } from "antd";
+import { Col, Divider, notification, PageHeader, Row } from "antd";
 import PopupUpdateOrder from "../../components/order/popupOrderUpdate";
 import PopupUpdatePayment from "../../components/sellerDetail/popupUpdatePayment";
 import LayoutC from "../../components/layout/layout";
@@ -14,6 +14,24 @@ import { useEffect, useState } from "react";
 const DetailSeller = (props) => {
   const router = useRouter();
   const { id } = router.query;
+  const { errPayment, notiPayment } = props;
+
+  useEffect(() => {
+    if (errPayment != "" && errPayment != undefined) {
+      return notification.error({
+        message: errPayment,
+      });
+    }
+  }, [errPayment]);
+
+  useEffect(() => {
+    if (notiPayment != "" && notiPayment != undefined) {
+      return notification.success({
+        message: notiPayment,
+      });
+    }
+  }, [notiPayment]);
+
   return (
     <LayoutC one={"/ Người bán"} two="Chi tiết">
       <PageHeader
@@ -37,7 +55,7 @@ const DetailSeller = (props) => {
         Thống kê
       </Divider>
 
-      <TableSell />
+      <TableSell id={id} />
       <Divider plain orientation="left">
         Đã thanh toán
       </Divider>
@@ -51,6 +69,8 @@ const DetailSeller = (props) => {
 const mapStateToProp = (state) => {
   return {
     loading: state.order.loading,
+    errPayment: state.payment.err,
+    notiPayment: state.payment.noti,
   };
 };
 

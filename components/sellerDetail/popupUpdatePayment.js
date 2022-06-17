@@ -13,12 +13,22 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE } from "../../redux/action/payment";
+import {
+  ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE,
+  ACT_UPDATE_PAYMENT_REQUEST,
+} from "../../redux/action/payment";
+import { getToken } from "../../services/utils/const";
 
 const { TextArea } = Input;
 
 const PopupUpdatePayment = (props) => {
-  const { updateVisible, payment, onChangeVisibleUpdate } = props;
+  const {
+    updateVisible,
+    payment,
+    reloadUpdate,
+    onChangeVisibleUpdate,
+    onUpdateHistory,
+  } = props;
   const [note, setNote] = useState("");
 
   const [form] = Form.useForm();
@@ -43,6 +53,14 @@ const PopupUpdatePayment = (props) => {
     });
   }, [payment]);
 
+  const onUpdate = () => {
+    onUpdateHistory({
+      id: payment?.id ?? 0,
+      note: note,
+      token: getToken(),
+    });
+  };
+
   return (
     <>
       <Drawer
@@ -56,7 +74,7 @@ const PopupUpdatePayment = (props) => {
         extra={
           <Space>
             <Button onClick={onClose}>Hủy</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={onUpdate} type="primary">
               Cập nhật
             </Button>
           </Space>
@@ -128,12 +146,16 @@ const mapStateToProp = (state) => {
   return {
     updateVisible: state.payment.updateVisible,
     payment: state.payment.payment,
+    reloadUpdate: state.payment.reloadUpdate,
   };
 };
 
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleUpdate: (payload) =>
     dispath({ type: ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE, payload }),
+  onUpdateHistory: (payload) => {
+    dispath({ type: ACT_UPDATE_PAYMENT_REQUEST, payload });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdatePayment);

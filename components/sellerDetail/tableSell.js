@@ -15,6 +15,7 @@ import {
   Input,
 } from "antd";
 import moment from "moment";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
@@ -40,9 +41,10 @@ const TableSell = (props) => {
   const {
     id,
     loading,
+    paymentLoading,
+    reload,
     categories,
     orders,
-    total,
     onChangeOrderVisibleUpdate,
     onFetchDataOrder,
     onPaymentOrder,
@@ -80,8 +82,16 @@ const TableSell = (props) => {
   };
 
   useEffect(() => {
+    if (reload) {
+      setSelectedRowKeys([]);
+      setTotalMoney(0);
+      fetchData();
+    }
+  }, [reload]);
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     setDataSource(orders);
@@ -131,7 +141,7 @@ const TableSell = (props) => {
 
   const onPayment = () => {
     onPaymentOrder({
-      user_id: id,
+      user_id: parseInt(id),
       list_sale_id: selectedRowKeys,
       payment_date: new Date(),
       note: note,
@@ -331,8 +341,8 @@ const TableSell = (props) => {
               format={dateFormat}
               onChange={(e) => {
                 console.log(e);
-                setFromDate(e[0]._i);
-                setToDate(e[1]._i);
+                setFromDate(e[0]._d);
+                setToDate(e[1]._d);
               }}
             />
           </Col>
@@ -373,7 +383,12 @@ const TableSell = (props) => {
                 marginBottom: 16,
               }}
             >
-              <Button type="primary" size="large" onClick={showConfirm}>
+              <Button
+                type="primary"
+                size="large"
+                onClick={showConfirm}
+                loading={paymentLoading}
+              >
                 Thanh toán
               </Button>
               <span
@@ -418,6 +433,8 @@ const mapStateToProp = (state) => {
     loading: state.order.loading,
     categories: state.category.categories,
     orders: state.order.orders,
+    reload: state.payment.reload,
+    paymentLoading: state.payment.loading,
   };
 };
 
