@@ -5,6 +5,9 @@ import {
   ACT_CREATE_SELLER_FAILURE,
   ACT_CREATE_SELLER_REQUEST,
   ACT_CREATE_SELLER_SUCCESS,
+  ACT_GET_A_SELLER_FAILURE,
+  ACT_GET_A_SELLER_REQUEST,
+  ACT_GET_A_SELLER_SUCCESS,
   ACT_GET_SELLER_FAILURE,
   ACT_GET_SELLER_REQUEST,
   ACT_GET_SELLER_SUCCESS,
@@ -39,6 +42,10 @@ export const watcherSaller = [
       ACT_GET_SELLER_WITHOUT_PAGING_FAILURE
     )
   ),
+  takeEvery(
+    ACT_GET_A_SELLER_REQUEST,
+    apiCall(getASeller, ACT_GET_A_SELLER_SUCCESS, ACT_GET_A_SELLER_FAILURE)
+  ),
 ];
 
 function getSeller(action) {
@@ -56,6 +63,14 @@ function getSeller(action) {
 
 function getSellerWithoutPaging(action) {
   return getAPI(sellerGateway + "/without-paging", null, action.payload.token);
+}
+
+function getASeller(action) {
+  return getAPI(
+    sellerGateway + "/" + action.payload.id,
+    null,
+    action.payload.token
+  );
 }
 
 function updateSeller(action) {

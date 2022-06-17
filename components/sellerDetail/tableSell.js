@@ -1,3 +1,4 @@
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   Row,
   Select,
@@ -9,32 +10,134 @@ import {
   Col,
   Tag,
   Popconfirm,
+  Spin,
+  Modal,
+  Input,
 } from "antd";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE } from "../../redux/action/order";
-import { dateFormat } from "../../services/utils/const";
-import formatNumber from "../../services/utils/number";
+import {
+  ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
+  ACT_GET_ORDER_REQUEST,
+  ACT_GET_ORDER_WITHOUT_PAGING_REQUEST,
+} from "../../redux/action/order";
+import { ACT_CREATE_PAYMENT_REQUEST } from "../../redux/action/payment";
+import {
+  dateFormat,
+  dateFormatSearch,
+  getToken,
+} from "../../services/utils/const";
+import { formatDate, formatNumber } from "../../services/utils/number";
 
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
+const { Option } = Select;
+const { confirm } = Modal;
+const { TextArea } = Input;
 
 const TableSell = (props) => {
-  const { onChangeOrderVisibleUpdate } = props;
+  const {
+    id,
+    loading,
+    categories,
+    orders,
+    total,
+    onChangeOrderVisibleUpdate,
+    onFetchDataOrder,
+    onPaymentOrder,
+  } = props;
+
   var today = new Date();
-  const [fromDate, setFromDate] = useState(
-    moment(today).subtract(3, "months").format(dateFormat)
-  );
-  const [toDate, setToDate] = useState(moment(today).format(dateFormat));
+  const defaultFromDate = moment(today).subtract(3, "months");
+  const defaultToDate = moment(today);
+  const [fromDate, setFromDate] = useState(defaultFromDate);
+  const [toDate, setToDate] = useState(defaultToDate);
+  const [totalMoney, setTotalMoney] = useState(0);
+  const [cateId, setCateId] = useState(null);
+  const [isPayment, setIsPayment] = useState(null);
+
+  const [dataSource, setDataSource] = useState([]);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  const [note, setNote] = useState("");
 
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
-    total: 200,
   });
-  const [totalMoney, setTotalMoney] = useState(0);
+
+  const fetchData = () => {
+    onFetchDataOrder({
+      user_id: id,
+      from_date: moment(fromDate).format(dateFormatSearch),
+      to_date: moment(toDate).format(dateFormatSearch),
+      cate_id: cateId,
+      is_payment: isPayment,
+      token: getToken(),
+    });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setDataSource(orders);
+  }, [orders]);
+
+  const onSearch = () => {
+    fetchData();
+  };
+
+  const onReset = () => {
+    setCateId(null);
+    setIsPayment(null);
+    setFromDate(defaultFromDate);
+    setToDate(defaultToDate);
+
+    onFetchDataOrder({
+      user_id: id,
+      from_date: moment(defaultFromDate).format(dateFormatSearch),
+      to_date: moment(defaultToDate).format(dateFormatSearch),
+      cate_id: 0,
+      is_payment: null,
+      token: getToken(),
+    });
+  };
+
+  const showConfirm = () => {
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <>
+          {`Đồng ý thanh toán ${
+            selectedRowKeys.length
+          } dòng với số tiền là ${formatNumber(totalMoney)} VND`}
+          <br></br>
+          {`Ghi chú: ${note}`}
+        </>
+      ),
+
+      onOk() {
+        onPayment();
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const onPayment = () => {
+    onPaymentOrder({
+      user_id: id,
+      list_sale_id: selectedRowKeys,
+      payment_date: new Date(),
+      note: note,
+      token: getToken(),
+    });
+  };
 
   const hasSelected = selectedRowKeys.length > 0;
 
@@ -72,8 +175,10 @@ const TableSell = (props) => {
     },
     {
       title: "Thể loại",
-      dataIndex: "category_name",
       key: "category_name",
+      render: (data) => {
+        return data.category?.name ?? "Không xác định";
+      },
     },
     {
       title: "Giá / Kg",
@@ -123,8 +228,11 @@ const TableSell = (props) => {
     },
     {
       title: "Ngày mua",
-      dataIndex: "buy_date",
+      dataIndex: "date",
       key: "buy_date",
+      render: (date) => {
+        return formatDate(date);
+      },
     },
     {
       title: "Cập nhật",
@@ -155,51 +263,6 @@ const TableSell = (props) => {
     },
   ];
 
-  const dataSource = [
-    {
-      key: "1",
-      id: 1,
-      name: "Duong",
-      phone_number: "0969360916",
-      category_name: "susu an",
-      price: 2400,
-      amount: 300,
-      total_money: 200000,
-      bag_number: 200,
-      is_payment: false,
-      buy_date: "123123",
-      note: "abcxyz",
-    },
-    {
-      key: "2",
-      id: 2,
-      name: "Duong123",
-      phone_number: "0969360916",
-      category_name: "susu giong",
-      price: 5000,
-      amount: 300,
-      total_money: 200000,
-      bag_number: 300,
-      is_payment: true,
-      buy_date: "123123",
-      note: "abcxyz",
-    },
-    {
-      key: "3",
-      id: 3,
-      name: "Duong123",
-      phone_number: "0969360916",
-      category_name: "susu giong",
-      price: 5000,
-      amount: 300,
-      total_money: 200000,
-      bag_number: 300,
-      is_payment: false,
-      buy_date: "123123",
-      note: "abcxyz",
-    },
-  ];
-
   const handleUpdateBtn = (data) => {
     onChangeOrderVisibleUpdate({
       status: true,
@@ -209,115 +272,164 @@ const TableSell = (props) => {
 
   return (
     <>
-      <Row>
-        <Col offset={10}>
-          <Title>Tìm kiếm</Title>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={6}>
-          <Select
-            size="large"
-            showSearch
-            placeholder="Chọn trạng thái"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              option.children.toLowerCase().includes(input.toLowerCase())
-            }
-          >
-            {/* <Option value="0">Tất cả</Option>
-            <Option value={true}>Đã thanh toán</Option>
-            <Option value={false}>Chưa thanh toán</Option> */}
-          </Select>
-        </Col>
-        <Col span={6} offset={1}>
-          <Select
-            size="large"
-            showSearch
-            placeholder="Chọn thể loại"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              option.children.toLowerCase().includes(input.toLowerCase())
-            }
-          >
-            {/* <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="tom">Tom</Option> */}
-          </Select>
-        </Col>
-        <Col span={4} offset={1}>
-          <RangePicker
-            defaultValue={[
-              moment(fromDate, dateFormat),
-              moment(toDate, dateFormat),
-            ]}
-            size="large"
-            format={dateFormat}
-            onChange={(e) => {
-              setFromDate(e[0]._i);
-              setToDate(e[1]._i);
-            }}
-          />
-        </Col>
-        <Col span={4} offset={1} style={{ float: "right" }}>
-          <Space>
-            <Button size="large" type="primary">
-              Tìm kiếm
-            </Button>
-            <Button size="large" type="primary">
-              Reset
-            </Button>
-          </Space>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <Table
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={dataSource}
-            pagination={pagination}
-            bordered={true}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <div
-            style={{
-              marginBottom: 16,
-            }}
-          >
-            <Button type="primary" size="large">
-              Thanh toán
-            </Button>
-            <span
+      <Spin spinning={loading}>
+        <Row>
+          <Col offset={10}>
+            <Title>Tìm kiếm</Title>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={6}>
+            <Select
+              size="large"
+              showSearch
+              placeholder="Chọn trạng thái"
+              optionFilterProp="children"
+              value={isPayment}
+              onChange={(e) => {
+                setIsPayment(e);
+              }}
+              style={{ width: 200 }}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              <Option value="">Tất cả</Option>
+              <Option value="true">Đã thanh toán</Option>
+              <Option value="false">Chưa thanh toán</Option>
+            </Select>
+          </Col>
+          <Col span={6} offset={1}>
+            <Select
+              size="large"
+              showSearch
+              placeholder="Chọn thể loại"
+              optionFilterProp="children"
+              value={cateId}
+              onChange={(e) => {
+                setCateId(e);
+              }}
+              style={{ width: 200 }}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+            >
+              <Option value="0">Tất cả</Option>;
+              {categories &&
+                categories.map((e) => {
+                  return <Option value={e.id}>{e.name}</Option>;
+                })}
+            </Select>
+          </Col>
+          <Col span={4} offset={1}>
+            <RangePicker
+              defaultValue={[
+                moment(defaultFromDate, dateFormat),
+                moment(defaultToDate, dateFormat),
+              ]}
+              size="large"
+              format={dateFormat}
+              onChange={(e) => {
+                console.log(e);
+                setFromDate(e[0]._i);
+                setToDate(e[1]._i);
+              }}
+            />
+          </Col>
+          <Col span={4} offset={1} style={{ float: "right" }}>
+            <Space>
+              <Button size="large" type="primary" onClick={onSearch}>
+                Tìm kiếm
+              </Button>
+              <Button size="large" type="primary" onClick={onReset}>
+                Reset
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Table
+              rowKey="id"
+              rowSelection={rowSelection}
+              columns={columns}
+              dataSource={dataSource}
+              pagination={pagination}
+              onChange={(e) => {
+                setPagination({
+                  ...pagination,
+                  current: e.current,
+                  pageSize: e.pageSize,
+                });
+              }}
+              bordered={true}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <div
               style={{
-                marginLeft: 8,
+                marginBottom: 16,
               }}
             >
-              {hasSelected ? `Đã chọn  ${selectedRowKeys.length} dòng` : ""}
-            </span>
-            <span
-              style={{
-                marginLeft: 30,
-              }}
-            >
-              <Text mark>
-                {" "}
-                {totalMoney ? `Tổng tiền  ${formatNumber(totalMoney)} VND` : ""}
-              </Text>
-            </span>
-          </div>
-        </Col>
-      </Row>
+              <Button type="primary" size="large" onClick={showConfirm}>
+                Thanh toán
+              </Button>
+              <span
+                style={{
+                  marginLeft: 8,
+                }}
+              >
+                {hasSelected ? `Đã chọn  ${selectedRowKeys.length} dòng` : ""}
+              </span>
+              <span
+                style={{
+                  marginLeft: 30,
+                }}
+              >
+                <Text mark>
+                  {" "}
+                  {totalMoney
+                    ? `Tổng tiền  ${formatNumber(totalMoney)} VND`
+                    : ""}
+                </Text>
+              </span>
+            </div>
+            <div>
+              <TextArea
+                rows={4}
+                placeholder="Ghi chú"
+                value={note}
+                onChange={(e) => {
+                  setNote(e.target.value);
+                }}
+              ></TextArea>
+            </div>
+          </Col>
+        </Row>
+      </Spin>
     </>
   );
+};
+
+const mapStateToProp = (state) => {
+  return {
+    loading: state.order.loading,
+    categories: state.category.categories,
+    orders: state.order.orders,
+  };
 };
 
 const mapDispatchToProp = (dispath) => ({
   onChangeOrderVisibleUpdate: (payload) =>
     dispath({ type: ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE, payload }),
+  onFetchDataOrder: (payload) => {
+    dispath({ type: ACT_GET_ORDER_WITHOUT_PAGING_REQUEST, payload });
+  },
+  onPaymentOrder: (payload) => {
+    dispath({ type: ACT_CREATE_PAYMENT_REQUEST, payload });
+  },
 });
 
-export default connect(null, mapDispatchToProp)(TableSell);
+export default connect(mapStateToProp, mapDispatchToProp)(TableSell);

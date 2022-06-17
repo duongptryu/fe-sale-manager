@@ -4,6 +4,9 @@ import {
   ACT_CREATE_SELLER_FAILURE,
   ACT_CREATE_SELLER_REQUEST,
   ACT_CREATE_SELLER_SUCCESS,
+  ACT_GET_A_SELLER_FAILURE,
+  ACT_GET_A_SELLER_REQUEST,
+  ACT_GET_A_SELLER_SUCCESS,
   ACT_GET_SELLER_FAILURE,
   ACT_GET_SELLER_REQUEST,
   ACT_GET_SELLER_SUCCESS,
@@ -22,6 +25,7 @@ export const initSellerState = {
   noti: "",
   reload: false,
   total: 0,
+  aUser: null,
 };
 
 export const sellerReducer = (state = initSellerState, action) => {
@@ -94,6 +98,24 @@ export const sellerReducer = (state = initSellerState, action) => {
         noti: "Tạo thành công",
       };
     case ACT_CREATE_SELLER_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        err:
+          action.response.response.status +
+          " " +
+          action.response.response.data.message,
+      };
+
+    case ACT_GET_A_SELLER_REQUEST:
+      return { ...state, loading: true, err: "" };
+    case ACT_GET_A_SELLER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        aUser: action.response.data.data,
+      };
+    case ACT_GET_A_SELLER_FAILURE:
       return {
         ...state,
         loading: false,

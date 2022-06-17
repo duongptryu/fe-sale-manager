@@ -2,6 +2,7 @@ import { all } from "redux-saga/effects";
 import { watcherAuth } from "./authSaga";
 import { watcherCategory } from "./category";
 import { watcherOrder } from "./order";
+import { watcherPayment } from "./payment";
 import { watcherSaller } from "./seller";
 
 export function* rootSaga() {
@@ -10,5 +11,6 @@ export function* rootSaga() {
     ...watcherCategory,
     ...watcherSaller,
     ...watcherOrder,
+    ...watcherPayment,
   ]);
 }

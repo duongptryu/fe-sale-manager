@@ -7,6 +7,9 @@ import {
   ACT_GET_ORDER_FAILURE,
   ACT_GET_ORDER_REQUEST,
   ACT_GET_ORDER_SUCCESS,
+  ACT_GET_ORDER_WITHOUT_PAGING_FAILURE,
+  ACT_GET_ORDER_WITHOUT_PAGING_REQUEST,
+  ACT_GET_ORDER_WITHOUT_PAGING_SUCCESS,
   ACT_UPDATE_ORDER_FAILURE,
   ACT_UPDATE_ORDER_REQUEST,
   ACT_UPDATE_ORDER_SUCCESS,
@@ -27,6 +30,7 @@ export const initOrderState = {
   noti: "",
   sellers: [],
   orders: [],
+  total: 0,
 };
 
 export const orderReducer = (state = initOrderState, action) => {
@@ -50,6 +54,7 @@ export const orderReducer = (state = initOrderState, action) => {
         loading: false,
         reload: false,
         orders: action.response.data.data,
+        total: action.response.data.paging.total,
       };
     case ACT_GET_ORDER_FAILURE:
       return {
@@ -117,6 +122,26 @@ export const orderReducer = (state = initOrderState, action) => {
     case ACT_GET_SELLER_WITHOUT_PAGING_FAILURE:
       return {
         ...state,
+        err:
+          action.response.response.status +
+          " " +
+          action.response.response.data.message,
+      };
+
+    case ACT_GET_ORDER_WITHOUT_PAGING_REQUEST:
+      return { ...state, loading: true, err: "" };
+    case ACT_GET_ORDER_WITHOUT_PAGING_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        reload: false,
+        orders: action.response.data.data,
+      };
+    case ACT_GET_ORDER_WITHOUT_PAGING_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        reload: false,
         err:
           action.response.response.status +
           " " +

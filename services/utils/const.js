@@ -14,3 +14,4 @@ export function setToken(newToken) {
 }
 
 export const dateFormat = "DD/MM/YYYY";
+export const dateFormatSearch = "YYYY-MM-DD";

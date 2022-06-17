@@ -4,7 +4,7 @@ import { useState } from "react";
 import { connect } from "react-redux";
 import { ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE } from "../../redux/action/payment";
 import { dateFormat } from "../../services/utils/const";
-import formatNumber from "../../services/utils/number";
+import { formatNumber } from "../../services/utils/number";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -18,6 +18,8 @@ const TablePayment = (props) => {
   const [toDatePayment, setToDatePayment] = useState(
     moment(today).format(dateFormat)
   );
+
+  
 
   const [paginationPayment, setPaginationPayment] = useState({
     current: 1,

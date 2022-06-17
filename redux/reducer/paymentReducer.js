@@ -1,4 +1,9 @@
-import { ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE } from "../action/payment";
+import {
+  ACT_CHANGE_UPDATE_PAYMENT_VISIBLE_STATE,
+  ACT_CREATE_PAYMENT_FAILURE,
+  ACT_CREATE_PAYMENT_REQUEST,
+  ACT_CREATE_PAYMENT_SUCCESS,
+} from "../action/payment";
 
 export const initPaymentState = {
   updateVisible: false,
@@ -15,6 +20,29 @@ export const paymentReducer = (state = initPaymentState, action) => {
         updateVisible: action.payload.status,
         payment: action.payload.payment,
       };
+
+    case ACT_CREATE_PAYMENT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+    case ACT_CREATE_PAYMENT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        reload: true,
+        noti: "Thanh toán thành công",
+      };
+    case ACT_CREATE_PAYMENT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        err:
+          action.response.response.status +
+          " " +
+          action.response.response.data.message,
+      };
+
     default:
       return state;
   }

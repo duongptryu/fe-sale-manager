@@ -8,10 +8,12 @@ import PersionSeller from "../../components/sellerDetail/persional";
 import TotalStatistic from "../../components/sellerDetail/statistic";
 import TableSell from "../../components/sellerDetail/tableSell";
 import TablePayment from "../../components/sellerDetail/tablePayment";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const DetailSeller = (props) => {
-  const Router = useRouter();
+  const router = useRouter();
+  const { id } = router.query;
   return (
     <LayoutC one={"/ Người bán"} two="Chi tiết">
       <PageHeader
@@ -24,10 +26,10 @@ const DetailSeller = (props) => {
       </Divider>
       <Row>
         <Col span={8}>
-          <PersionSeller />
+          <PersionSeller id={id} />
         </Col>
         <Col span={14}>
-          <TotalStatistic />
+          <TotalStatistic id={id} />
         </Col>
       </Row>
 
@@ -39,7 +41,7 @@ const DetailSeller = (props) => {
       <Divider plain orientation="left">
         Đã thanh toán
       </Divider>
-      <TablePayment />
+      <TablePayment id={id} />
       <PopupUpdateOrder />
       <PopupUpdatePayment />
     </LayoutC>

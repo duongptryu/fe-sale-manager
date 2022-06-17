@@ -5,5 +5,5 @@ export const formatNumber = (num) => {
 };
 
 export const formatDate = (date) => {
-  return moment(date).format("DD/MM/YYYY HH:mm:ss");
+  return moment(date).format("DD/MM/YYYY");
 };
