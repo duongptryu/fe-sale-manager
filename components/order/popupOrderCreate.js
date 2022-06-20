@@ -123,9 +123,9 @@ const PopupCreateOrder = (props) => {
                   }
                 >
                   {sellers &&
-                    sellers.map((e) => {
+                    sellers.map((e, index) => {
                       return (
-                        <Option value={e.id}>
+                        <Option value={e.id} key={index}>
                           {e.name + " [" + e.phone_number + "]"}
                         </Option>
                       );
@@ -147,8 +147,12 @@ const PopupCreateOrder = (props) => {
                   }
                 >
                   {categories &&
-                    categories.map((e) => {
-                      return <Option value={e.id}>{e.name}</Option>;
+                    categories.map((e, index) => {
+                      return (
+                        <Option value={e.id} key={index}>
+                          {e.name}
+                        </Option>
+                      );
                     })}
                 </Select>
               </Form.Item>

@@ -31,7 +31,7 @@ import { ACT_GET_SELLER_WITHOUT_PAGING_REQUEST } from "../../redux/action/seller
 import { getToken } from "../../services/utils/const";
 import { ACT_GET_CATEGORY_REQUEST } from "../../redux/action/category";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 const dateFormat = "DD/MM/YYYY";
@@ -58,6 +58,43 @@ const Order = (props) => {
   const [cateId, setCateId] = useState(null);
   const [dataSource, setDataSource] = useState([]);
 
+  const [totalBag, setTotalBag] = useState(null);
+  const [totalWeight, setTotalWeight] = useState(null);
+  const [money, setMoney] = useState(null);
+  const [payment, setPayment] = useState(null);
+
+  const canculateData = () => {
+    let totalMoney = 0;
+    let totalMoneyPaymented = 0;
+    let totalBag = 0;
+    let totalWeight = 0;
+    let paymented = 0;
+    let notPaymentYet = 0;
+    orders.forEach((e) => {
+      totalMoney += e.total_money;
+      totalBag += e.bag_number;
+      totalWeight += e.amount;
+      if (e.is_payment) {
+        paymented += 1;
+        totalMoneyPaymented += e.total_money;
+      } else {
+        notPaymentYet += 1;
+      }
+    });
+
+    setTotalBag(totalBag);
+    setTotalWeight(totalWeight);
+    setMoney({
+      total_money: totalMoney,
+      total_money_paymented: totalMoneyPaymented,
+      total_money_not_payment_yet: totalMoney - totalMoneyPaymented,
+    });
+    setPayment({
+      paymented: paymented,
+      notePaymentYet: notPaymentYet,
+    });
+  };
+
   //Get seller
   useEffect(() => {
     onGetOrder({
@@ -73,6 +110,7 @@ const Order = (props) => {
 
   useEffect(() => {
     setDataSource(orders);
+    canculateData();
   }, [orders]);
 
   useEffect(() => {
@@ -95,7 +133,19 @@ const Order = (props) => {
     onGetOrder({
       name: name,
       cate_id: cateId,
-      date: moment(new Date(date)).format(dateFormat),
+      date: moment(new Date(date)).format(dateFormatSearch),
+      token: getToken(),
+    });
+  };
+
+  const onReset = () => {
+    setName("");
+    setCateId(null);
+    setDate(today);
+    onGetOrder({
+      name: "",
+      cate_id: 0,
+      date: moment(today).format(dateFormatSearch),
       token: getToken(),
     });
   };
@@ -153,6 +203,7 @@ const Order = (props) => {
     {
       title: "Tổng tiền",
       key: "total_price",
+      width: "15%",
       render: (data) => {
         return formatNumber(data.price * data.amount);
       },
@@ -160,6 +211,7 @@ const Order = (props) => {
     {
       title: "Trạng thái",
       dataIndex: "is_payment",
+      width: "15%",
       key: "is_payment",
       render: (data) => {
         if (data) {
@@ -216,12 +268,6 @@ const Order = (props) => {
     });
   };
 
-  const onReset = () => {
-    setName("");
-    setCateId(null);
-    setDate(today);
-  };
-
   return (
     <LayoutC one={"/ Nhập hàng"} two="Thông tin nhập hàng theo ngày">
       <Spin spinning={loading}>
@@ -260,8 +306,12 @@ const Order = (props) => {
               >
                 <Option value="0">Tất cả</Option>;
                 {categories &&
-                  categories.map((e) => {
-                    return <Option value={e.id}>{e.name}</Option>;
+                  categories.map((e, index) => {
+                    return (
+                      <Option value={e.id} key={index}>
+                        {e.name}
+                      </Option>
+                    );
                   })}
               </Select>
             </Col>
@@ -270,6 +320,7 @@ const Order = (props) => {
                 defaultValue={moment(today, dateFormat)}
                 format={dateFormat}
                 size="large"
+                value={moment(date, dateFormat)}
                 onChange={(e) => {
                   setDate(e);
                 }}
@@ -315,6 +366,56 @@ const Order = (props) => {
                 columns={columns}
                 dataSource={dataSource}
                 pagination={false}
+                scroll={{
+                  y: 800,
+                }}
+                bordered
+                summary={() => (
+                  <Table.Summary fixed>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0}>
+                        Tổng kết
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                      <Table.Summary.Cell index={5}>
+                        <Text mark>{formatNumber(totalBag ?? 0)} Túi</Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={6}>
+                        <Text mark>{formatNumber(totalWeight ?? 0)} Kg</Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={7}>
+                        <Text mark>
+                          Tổng tiền {formatNumber(money?.total_money ?? 0)} VND
+                        </Text>
+                        <br></br>
+                        <Text mark>
+                          Đã thanh toán{" "}
+                          {formatNumber(money?.total_money_paymented ?? 0)} VND
+                        </Text>
+                        <br></br>
+                        <Text mark>
+                          Chưa thanh toán{" "}
+                          {formatNumber(
+                            money?.total_money_not_payment_yet ?? 0
+                          )}
+                          VND
+                        </Text>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={8}>
+                        <Text mark>
+                          Đã thanh toán {payment?.paymented ?? 0}
+                        </Text>
+                        <br></br>
+                        <Text mark>
+                          Chưa thanh toán {payment?.notePaymentYet ?? 0}
+                        </Text>
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </Table.Summary>
+                )}
               />
             </Col>
           </Row>

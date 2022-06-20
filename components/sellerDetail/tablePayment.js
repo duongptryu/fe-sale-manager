@@ -38,6 +38,21 @@ const TablePayment = (props) => {
     pageSize: 10,
   });
 
+  const [totalWeight, setTotalWeight] = useState(null);
+  const [money, setMoney] = useState(null);
+
+  const canculateData = () => {
+    let totalMoney = 0;
+    let totalWeight = 0;
+    histories.forEach((e) => {
+      totalMoney += e.total_money;
+      totalWeight += e.amount;
+    });
+
+    setTotalWeight(totalWeight);
+    setMoney(totalMoney);
+  };
+
   const fetchData = () => {
     onFetchDataPayment({
       user_id: id,
@@ -53,6 +68,7 @@ const TablePayment = (props) => {
 
   useEffect(() => {
     setDataSourcePayment(histories);
+    canculateData();
   }, [histories]);
 
   const onSearch = () => {
@@ -183,6 +199,21 @@ const TablePayment = (props) => {
               dataSource={dataSourcePayment}
               pagination={paginationPayment}
               bordered={true}
+              summary={() => (
+                <Table.Summary fixed>
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell index={0}>Tổng kết</Table.Summary.Cell>
+                    <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={5}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={6}>
+                      <Text mark>{formatNumber(totalWeight ?? 0)} Kg</Text>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={7}>
+                      <Text mark>Tổng tiền {formatNumber(money ?? 0)} VND</Text>
+                    </Table.Summary.Cell>
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )}
             />
           </Col>
         </Row>

@@ -70,6 +70,43 @@ const TableSell = (props) => {
     pageSize: 10,
   });
 
+  const [totalBag, setTotalBag] = useState(null);
+  const [totalWeight, setTotalWeight] = useState(null);
+  const [money, setMoney] = useState(null);
+  const [payment, setPayment] = useState(null);
+
+  const canculateData = () => {
+    let totalMoney = 0;
+    let totalMoneyPaymented = 0;
+    let totalBag = 0;
+    let totalWeight = 0;
+    let paymented = 0;
+    let notPaymentYet = 0;
+    orders.forEach((e) => {
+      totalMoney += e.total_money;
+      totalBag += e.bag_number;
+      totalWeight += e.amount;
+      if (e.is_payment) {
+        paymented += 1;
+        totalMoneyPaymented += e.total_money;
+      } else {
+        notPaymentYet += 1;
+      }
+    });
+
+    setTotalBag(totalBag);
+    setTotalWeight(totalWeight);
+    setMoney({
+      total_money: totalMoney,
+      total_money_paymented: totalMoneyPaymented,
+      total_money_not_payment_yet: totalMoney - totalMoneyPaymented,
+    });
+    setPayment({
+      paymented: paymented,
+      notePaymentYet: notPaymentYet,
+    });
+  };
+
   const fetchData = () => {
     onFetchDataOrder({
       user_id: id,
@@ -95,6 +132,7 @@ const TableSell = (props) => {
 
   useEffect(() => {
     setDataSource(orders);
+    canculateData();
   }, [orders]);
 
   const onSearch = () => {
@@ -214,6 +252,7 @@ const TableSell = (props) => {
     {
       title: "Tổng tiền",
       dataIndex: "total_money",
+      width: "15%",
       key: "total_price",
       render: (money) => {
         return formatNumber(money);
@@ -222,6 +261,7 @@ const TableSell = (props) => {
     {
       title: "Trạng thái",
       dataIndex: "is_payment",
+      width: "15%",
       key: "is_payment",
       render: (data) => {
         if (data) {
@@ -326,8 +366,12 @@ const TableSell = (props) => {
             >
               <Option value="0">Tất cả</Option>;
               {categories &&
-                categories.map((e) => {
-                  return <Option value={e.id}>{e.name}</Option>;
+                categories.map((e, index) => {
+                  return (
+                    <Option value={e.id} key={index}>
+                      {e.name}
+                    </Option>
+                  );
                 })}
             </Select>
           </Col>
@@ -373,6 +417,46 @@ const TableSell = (props) => {
                 });
               }}
               bordered={true}
+              summary={() => (
+                <Table.Summary fixed>
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell index={0}>Tổng kết</Table.Summary.Cell>
+                    <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={4}></Table.Summary.Cell>
+                    <Table.Summary.Cell index={5}>
+                      <Text mark>{formatNumber(totalBag ?? 0)} Túi</Text>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={6}>
+                      <Text mark>{formatNumber(totalWeight ?? 0)} Kg</Text>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={7}>
+                      <Text mark>
+                        Tổng tiền {formatNumber(money?.total_money ?? 0)} VND
+                      </Text>
+                      <br></br>
+                      <Text mark>
+                        Đã thanh toán{" "}
+                        {formatNumber(money?.total_money_paymented ?? 0)} VND
+                      </Text>
+                      <br></br>
+                      <Text mark>
+                        Chưa thanh toán{" "}
+                        {formatNumber(money?.total_money_not_payment_yet ?? 0)}{" "}
+                        VND
+                      </Text>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={8}>
+                      <Text mark>Đã thanh toán {payment?.paymented ?? 0}</Text>
+                      <br></br>
+                      <Text mark>
+                        Chưa thanh toán {payment?.notePaymentYet ?? 0}
+                      </Text>
+                    </Table.Summary.Cell>
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )}
             />
           </Col>
         </Row>

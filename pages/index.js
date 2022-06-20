@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-const main = () => {
-  const Router = useRouter();
+const Main = () => {
+  const router = useRouter();
 
   useEffect(() => {
-    Router.push("/dashboard");
+    router.push("/dashboard");
   }, []);
 };
 
-export default main;
+export default Main;
