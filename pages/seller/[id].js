@@ -36,7 +36,7 @@ const DetailSeller = (props) => {
     <LayoutC one={"/ Người bán"} two="Chi tiết">
       <PageHeader
         className="site-page-header"
-        onBack={() => Router.push("/seller")}
+        onBack={() => router.push("/seller")}
         title="Quay lại"
       />
       <Divider plain orientation="left">

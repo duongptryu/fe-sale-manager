@@ -49,7 +49,7 @@ export const sellerReducer = (state = initSellerState, action) => {
         loading: false,
         reload: false,
         users: action.response.data.data,
-        total: action.response.data.filter.total,
+        total: action.response.data.paging.total,
       };
     case ACT_GET_SELLER_FAILURE:
       return {

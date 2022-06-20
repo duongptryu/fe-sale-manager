@@ -41,7 +41,7 @@ const Seller = (props) => {
   const [dataSource, setDataSource] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 7,
+    pageSize: 10,
   });
   const [nameSearch, setNameSearch] = useState("");
   const [phoneNumberSearch, setPhoneNumberSearch] = useState("");
