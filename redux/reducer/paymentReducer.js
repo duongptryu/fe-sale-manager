@@ -35,6 +35,7 @@ export const paymentReducer = (state = initPaymentState, action) => {
         ...state,
         loading: true,
         reload: false,
+        err: "",
       };
     case ACT_CREATE_PAYMENT_SUCCESS:
       return {
@@ -58,6 +59,7 @@ export const paymentReducer = (state = initPaymentState, action) => {
         ...state,
         loading: true,
         reloadUpdate: false,
+        err: "",
       };
     case ACT_UPDATE_PAYMENT_SUCCESS:
       return {
@@ -82,6 +84,7 @@ export const paymentReducer = (state = initPaymentState, action) => {
         ...state,
         loading: true,
         reload: false,
+        err: "",
       };
     case ACT_GET_PAYMENT_WITHOUT_PAGING_SUCCESS:
       return {

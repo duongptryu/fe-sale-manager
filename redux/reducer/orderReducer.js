@@ -47,7 +47,7 @@ export const orderReducer = (state = initOrderState, action) => {
         createVisible: action.payload.status,
       };
     case ACT_GET_ORDER_REQUEST:
-      return { ...state, loading: true, err: "" };
+      return { ...state, loading: true, err: "", noti: "" };
     case ACT_GET_ORDER_SUCCESS:
       return {
         ...state,
@@ -70,6 +70,8 @@ export const orderReducer = (state = initOrderState, action) => {
       return {
         ...state,
         loading: true,
+        err: "",
+        noti: "",
       };
     case ACT_UPDATE_ORDER_SUCCESS:
       return {
@@ -93,6 +95,8 @@ export const orderReducer = (state = initOrderState, action) => {
       return {
         ...state,
         loading: true,
+        err: "",
+        noti: "",
       };
     case ACT_CREATE_ORDER_SUCCESS:
       return {
@@ -113,7 +117,7 @@ export const orderReducer = (state = initOrderState, action) => {
       };
 
     case ACT_GET_SELLER_WITHOUT_PAGING_REQUEST:
-      return { ...state, err: "" };
+      return { ...state, err: "", noti: "" };
     case ACT_GET_SELLER_WITHOUT_PAGING_SUCCESS:
       return {
         ...state,
@@ -129,7 +133,7 @@ export const orderReducer = (state = initOrderState, action) => {
       };
 
     case ACT_GET_ORDER_WITHOUT_PAGING_REQUEST:
-      return { ...state, loading: true, err: "" };
+      return { ...state, loading: true, err: "", noti: "" };
     case ACT_GET_ORDER_WITHOUT_PAGING_SUCCESS:
       return {
         ...state,

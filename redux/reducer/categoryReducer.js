@@ -40,7 +40,7 @@ export const categoryReducer = (state = initCateState, action) => {
         category: action.payload.category,
       };
     case ACT_GET_CATEGORY_REQUEST:
-      return { ...state, loading: true, err: "" };
+      return { ...state, loading: true, err: "", noti: "" };
     case ACT_GET_CATEGORY_SUCCESS:
       return {
         ...state,
@@ -62,6 +62,8 @@ export const categoryReducer = (state = initCateState, action) => {
       return {
         ...state,
         loading: true,
+        err: "",
+        noti: "",
       };
     case ACT_UPDATE_CATEGORY_SUCCESS:
       return {
@@ -85,6 +87,8 @@ export const categoryReducer = (state = initCateState, action) => {
       return {
         ...state,
         loading: true,
+        err: "",
+        noti: "",
       };
     case ACT_CREATE_CATEGORY_SUCCESS:
       return {

@@ -42,7 +42,7 @@ export const sellerReducer = (state = initSellerState, action) => {
         user: action.payload.user,
       };
     case ACT_GET_SELLER_REQUEST:
-      return { ...state, loading: true, err: "" };
+      return { ...state, loading: true, err: "", noti: "" };
     case ACT_GET_SELLER_SUCCESS:
       return {
         ...state,
@@ -65,6 +65,8 @@ export const sellerReducer = (state = initSellerState, action) => {
       return {
         ...state,
         loading: true,
+        err: "",
+        noti: "",
       };
     case ACT_UPDATE_SELLER_SUCCESS:
       return {
@@ -88,6 +90,8 @@ export const sellerReducer = (state = initSellerState, action) => {
       return {
         ...state,
         loading: true,
+        err: "",
+        noti: "",
       };
     case ACT_CREATE_SELLER_SUCCESS:
       return {
@@ -108,7 +112,7 @@ export const sellerReducer = (state = initSellerState, action) => {
       };
 
     case ACT_GET_A_SELLER_REQUEST:
-      return { ...state, loading: true, err: "" };
+      return { ...state, loading: true, err: "", noti: "" };
     case ACT_GET_A_SELLER_SUCCESS:
       return {
         ...state,
