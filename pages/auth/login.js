@@ -18,12 +18,10 @@ const { Title } = Typography;
 const { Header, Content } = Layout;
 
 const LoginForm = (props) => {
-  const Router = useRouter();
+  const router = useRouter();
   useEffect(() => {
-    const tokenD = localStorage.getItem("token") || "";
-
-    if (tokenD != "") {
-      return Router.push("/dashboard");
+    if (getToken() != "") {
+      router.push("/dashboard");
     }
   });
 
