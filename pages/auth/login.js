@@ -20,12 +20,12 @@ const { Header, Content } = Layout;
 const LoginForm = (props) => {
   const router = useRouter();
   useEffect(() => {
-    if (getToken() != "") {
-      router.push("/dashboard");
+    if (getToken()) {
+      Router.push("/order");
     }
   });
 
-  const { token, onLogin, err, loading } = props;
+  const { onLogin, err, loading } = props;
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 

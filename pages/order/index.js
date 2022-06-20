@@ -25,11 +25,13 @@ import {
   ACT_CHANGE_ORDER_NOTI,
   ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
   ACT_GET_ORDER_REQUEST,
+  ACT_GET_ORDER_WITHOUT_PAGING_REQUEST,
 } from "../../redux/action/order";
 import PopupOrderCreate from "../../components/order/popupOrderCreate";
 import { ACT_GET_SELLER_WITHOUT_PAGING_REQUEST } from "../../redux/action/seller";
 import { getToken } from "../../services/utils/const";
 import { ACT_GET_CATEGORY_REQUEST } from "../../redux/action/category";
+import { render } from "react-dom";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -49,10 +51,8 @@ const Order = (props) => {
     orders,
     err,
     noti,
-    reload,
-    sellers,
     categories,
-    onChangeOrderNoti,
+    reload,
   } = props;
   const [date, setDate] = useState(today);
   const [name, setName] = useState("");
@@ -141,23 +141,20 @@ const Order = (props) => {
     }
   }, [noti]);
 
-  const onSearch = () => {
+  useEffect(() => {
     onGetOrder({
       name: name,
       cate_id: cateId,
       date: moment(new Date(date)).format(dateFormatSearch),
       token: getToken(),
     });
-  };
+  }, [reload]);
 
-  const onReset = () => {
-    setName("");
-    setCateId(null);
-    setDate(today);
+  const onSearch = () => {
     onGetOrder({
-      name: "",
-      cate_id: 0,
-      date: moment(today).format(dateFormatSearch),
+      name: name,
+      cate_id: cateId,
+      date: moment(new Date(date)).format(dateFormatSearch),
       token: getToken(),
     });
   };
@@ -237,6 +234,18 @@ const Order = (props) => {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
+      width: "200px",
+      render: (note) => {
+        return <Text mark>{note}</Text>;
+      },
+    },
+    {
+      title: "Ngày mua",
+      dataIndex: "date",
+      key: "date",
+      render: (date) => {
+        return moment(date).format(dateFormat);
+      },
     },
     {
       title: "Ngày",
@@ -288,6 +297,18 @@ const Order = (props) => {
     });
   };
 
+  const onReset = () => {
+    setName("");
+    setCateId(null);
+    setDate(today);
+    onGetOrder({
+      name: "",
+      cate_id: 0,
+      date: moment(new Date(today)).format(dateFormatSearch),
+      token: getToken(),
+    });
+  };
+
   return (
     <LayoutC one={"/ Nhập hàng"} two="Thông tin nhập hàng theo ngày">
       <Spin spinning={loading}>
@@ -320,16 +341,17 @@ const Order = (props) => {
                 placeholder="Chọn thể loại"
                 optionFilterProp="children"
                 onChange={(v) => setCateId(v)}
+                value={cateId}
                 filterOption={(input, option) =>
                   option.children.toLowerCase().includes(input.toLowerCase())
                 }
               >
                 <Option value="0">Tất cả</Option>;
                 {categories &&
-                  categories.map((e, index) => {
+                  categories.map((e) => {
                     return (
                       <Option value={e.id} key={index}>
-                        {e.name}
+                        {e.name} [{e.kg_for_bag} Kg]
                       </Option>
                     );
                   })}
@@ -469,7 +491,7 @@ const mapDispatchToProp = (dispath) => ({
   onGetAllCategory: (payload) =>
     dispath({ type: ACT_GET_CATEGORY_REQUEST, payload }),
   onGetOrder: (payload) => {
-    dispath({ type: ACT_GET_ORDER_REQUEST, payload });
+    dispath({ type: ACT_GET_ORDER_WITHOUT_PAGING_REQUEST, payload });
   },
 });
 

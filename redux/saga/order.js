@@ -20,8 +20,12 @@ const orderGateway = "/sale";
 
 export const watcherOrder = [
   takeEvery(
-    ACT_GET_ORDER_REQUEST,
-    apiCall(getOrder, ACT_GET_ORDER_SUCCESS, ACT_GET_ORDER_FAILURE)
+    ACT_GET_ORDER_WITHOUT_PAGING_REQUEST,
+    apiCall(
+      getOrderWithoutPaging,
+      ACT_GET_ORDER_WITHOUT_PAGING_SUCCESS,
+      ACT_GET_ORDER_WITHOUT_PAGING_FAILURE
+    )
   ),
   takeEvery(
     ACT_GET_ORDER_WITHOUT_PAGING_REQUEST,

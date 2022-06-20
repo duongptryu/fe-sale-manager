@@ -24,7 +24,7 @@ import { useRouter } from "next/router";
 import { getToken } from "../../services/utils/const";
 import { formatDate } from "../../services/utils/number";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const Seller = (props) => {
   const {
@@ -128,6 +128,10 @@ const Seller = (props) => {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
+      width: "200px",
+      render: (note) => {
+        return <Text mark>{note}</Text>;
+      },
     },
     {
       title: "Ngày tạo",

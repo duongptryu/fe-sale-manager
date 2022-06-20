@@ -154,10 +154,10 @@ const PopupCreateOrder = (props) => {
                   }
                 >
                   {categories &&
-                    categories.map((e, index) => {
+                    categories.map((e) => {
                       return (
                         <Option value={e.id} key={index}>
-                          {e.name}
+                          {e.name} [{e.kg_for_bag} Kg]
                         </Option>
                       );
                     })}

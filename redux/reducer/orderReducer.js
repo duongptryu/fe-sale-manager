@@ -82,6 +82,7 @@ export const orderReducer = (state = initOrderState, action) => {
         noti: "Cập nhật thành công",
       };
     case ACT_UPDATE_ORDER_FAILURE:
+      console.log("ACT_UPDATE_ORDER_FAILURE", action);
       return {
         ...state,
         loading: false,
@@ -131,7 +132,6 @@ export const orderReducer = (state = initOrderState, action) => {
           " " +
           action.response.response.data.message,
       };
-
     case ACT_GET_ORDER_WITHOUT_PAGING_REQUEST:
       return { ...state, loading: true, err: "", noti: "" };
     case ACT_GET_ORDER_WITHOUT_PAGING_SUCCESS:

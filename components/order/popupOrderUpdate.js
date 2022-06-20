@@ -13,14 +13,24 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE } from "../../redux/action/order";
+import {
+  ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
+  ACT_UPDATE_ORDER_REQUEST,
+} from "../../redux/action/order";
+import { getToken } from "../../services/utils/const";
 import { formatNumber } from "../../services/utils/number";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
 const PopupUpdateOrder = (props) => {
-  const { updateVisible, order, onChangeVisibleUpdate } = props;
+  const {
+    updateVisible,
+    order,
+    categories,
+    onChangeVisibleUpdate,
+    onUpdateOrder,
+  } = props;
   const [price, setPrice] = useState(0);
   const [amount, setAmount] = useState(0);
   const [cateId, setCateId] = useState(0);
@@ -38,6 +48,18 @@ const PopupUpdateOrder = (props) => {
     });
   };
 
+  const onUpdate = () => {
+    onUpdateOrder({
+      id: order?.id ?? 0,
+      price: price,
+      amount: amount,
+      bag_number: bagNumber,
+      note: note,
+      cate_id: cateId,
+      token: getToken(),
+    });
+  };
+
   useEffect(() => {
     setPrice(order?.price ?? 0);
     setAmount(order?.amount ?? 0);
@@ -47,14 +69,15 @@ const PopupUpdateOrder = (props) => {
     setBagNumber(order?.bag_number ?? "");
     form.setFieldsValue({
       id: order?.id ?? "Không xác định",
-      name: order?.name ?? "Không xác định",
-      phone_number: order?.phone_number ?? "Không xác định",
+      name: order?.user?.name ?? "Không xác định",
+      phone_number: order?.user?.phone_number ?? "Không xác định",
       cate_id: order?.cate_id ?? "Không xác định",
       price: order?.price ?? 0,
       amount: order?.amount ?? 0,
       bag_number: order?.bag_number ?? 0,
       is_payment: order?.is_payment ?? false,
       note: order?.note ?? "",
+      buy_date: order?.date ?? "Không xác định",
       created_at: order?.created_at ?? "Không xác định",
       updated_at: order?.updated_at ?? "Không xác định",
     });
@@ -95,7 +118,7 @@ const PopupUpdateOrder = (props) => {
         extra={
           <Space>
             <Button onClick={onClose}>Hủy</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={onUpdate} type="primary">
               Cập nhật
             </Button>
           </Space>
@@ -131,9 +154,14 @@ const PopupUpdateOrder = (props) => {
                     option.children.toLowerCase().includes(input.toLowerCase())
                   }
                 >
-                  <Option value="1">Jack</Option>
-                  <Option value="2">Lucy</Option>
-                  <Option value="3">Tom</Option>
+                  {categories &&
+                    categories.map((e) => {
+                      return (
+                        <Option value={e.id}>
+                          {e.name} [{e.kg_for_bag} Kg]
+                        </Option>
+                      );
+                    })}
                 </Select>
               </Form.Item>
             </Col>
@@ -227,6 +255,11 @@ const PopupUpdateOrder = (props) => {
               </Form.Item>
             </Col>
             <Col span={24}>
+              <Form.Item name="buy_date" label="Ngày mua">
+                <Input disabled={true} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
               <Form.Item name="created_at" label="Ngày Tạo">
                 <Input disabled={true} />
               </Form.Item>
@@ -247,12 +280,16 @@ const mapStateToProp = (state) => {
   return {
     updateVisible: state.order.updateVisible,
     order: state.order.order,
+    categories: state.category.categories,
   };
 };
 
 const mapDispatchToProp = (dispath) => ({
   onChangeVisibleUpdate: (payload) =>
     dispath({ type: ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE, payload }),
+  onUpdateOrder: (payload) => {
+    dispath({ type: ACT_UPDATE_ORDER_REQUEST, payload });
+  },
 });
 
 export default connect(mapStateToProp, mapDispatchToProp)(PopupUpdateOrder);
