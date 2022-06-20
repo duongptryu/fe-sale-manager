@@ -39,6 +39,7 @@ const PopupCreateOrder = (props) => {
     onCreateOrder,
     sellers,
     categories,
+    reload,
   } = props;
   const [price, setPrice] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -57,6 +58,12 @@ const PopupCreateOrder = (props) => {
       status: false,
     });
   };
+
+  useEffect(() => {
+    if (reload) {
+      form.resetFields();
+    }
+  }, [reload]);
 
   useEffect(() => {
     setAmount(bagNumber * 10);
@@ -83,7 +90,7 @@ const PopupCreateOrder = (props) => {
       bag_number: bagNumber,
       note: note,
       price: price,
-      date: moment(new Date(date)).format(dateFormat),
+      date: moment(new Date(date)).format(),
       token: getToken(),
     });
   };
@@ -257,6 +264,7 @@ const PopupCreateOrder = (props) => {
                   defaultValue={moment(today, dateFormat)}
                   format={dateFormat}
                   size="large"
+                  value={moment(date, dateFormat)}
                   onChange={(e) => {
                     setDate(e);
                   }}
@@ -285,6 +293,7 @@ const mapStateToProp = (state) => {
     createVisible: state.order.createVisible,
     sellers: state.order.sellers,
     categories: state.category.categories,
+    reload: state.order.reload,
   };
 };
 

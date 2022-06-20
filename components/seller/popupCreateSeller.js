@@ -20,10 +20,12 @@ import { getToken } from "../../services/utils/const";
 const { TextArea } = Input;
 
 const PopupCreateSeller = (props) => {
-  const { createVisible, onChangeVisible, onCreateSeller } = props;
+  const { createVisible, onChangeVisible, onCreateSeller, reload } = props;
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [note, setNote] = useState("");
+
+  const [form] = Form.useForm();
 
   const onClose = () => {
     onChangeVisible(false);
@@ -37,6 +39,12 @@ const PopupCreateSeller = (props) => {
       token: getToken(),
     });
   };
+
+  useEffect(() => {
+    if (reload) {
+      form.resetFields();
+    }
+  }, [reload]);
 
   return (
     <>
@@ -57,7 +65,7 @@ const PopupCreateSeller = (props) => {
           </Space>
         }
       >
-        <Form layout="vertical" hideRequiredMark>
+        <Form layout="vertical" hideRequiredMark form={form}>
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item
@@ -128,6 +136,7 @@ const PopupCreateSeller = (props) => {
 const mapStateToProp = (state) => {
   return {
     createVisible: state.seller.createVisible,
+    reload: state.seller.reload,
   };
 };
 

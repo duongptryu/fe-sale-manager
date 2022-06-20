@@ -18,7 +18,7 @@ import moment from "moment";
 import { connect } from "react-redux";
 import LayoutC from "../../components/layout/layout";
 import { useEffect, useState } from "react";
-import { formatNumber } from "../../services/utils/number";
+import { formatDate, formatNumber } from "../../services/utils/number";
 import PopupUpdateOrder from "../../components/order/popupOrderUpdate";
 import {
   ACT_CHANGE_CREATE_ORDER_VISIBLE_STATE,
@@ -49,6 +49,7 @@ const Order = (props) => {
     orders,
     err,
     noti,
+    reload,
     sellers,
     categories,
     onChangeOrderNoti,
@@ -107,6 +108,17 @@ const Order = (props) => {
       token: getToken(),
     });
   }, []);
+
+  useEffect(() => {
+    if (reload) {
+      onGetOrder({
+        name: name,
+        cate_id: cateId,
+        date: moment(new Date(date)).format(dateFormatSearch),
+        token: getToken(),
+      });
+    }
+  }, [reload]);
 
   useEffect(() => {
     setDataSource(orders);
@@ -225,6 +237,14 @@ const Order = (props) => {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
+    },
+    {
+      title: "Ngày",
+      dataIndex: "date",
+      key: "date",
+      render: (date) => {
+        return formatDate(date);
+      },
     },
     {
       title: "Cập nhật",
@@ -435,6 +455,7 @@ const mapStateToProp = (state) => {
     err: state.order.err,
     sellers: state.order.sellers,
     categories: state.category.categories,
+    reload: state.order.reload,
   };
 };
 

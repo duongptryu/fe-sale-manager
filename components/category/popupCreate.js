@@ -21,9 +21,11 @@ import {
 import { getToken } from "../../services/utils/const";
 
 const PopupCreateCategory = (props) => {
-  const { createVisible, onChangeVisible, onCreateCategory } = props;
+  const { createVisible, onChangeVisible, onCreateCategory, reload } = props;
   const [kgForBag, setKgForBag] = useState(0);
   const [name, setName] = useState("");
+
+  const [form] = Form.useForm();
 
   const onClose = () => {
     onChangeVisible(false);
@@ -36,6 +38,12 @@ const PopupCreateCategory = (props) => {
       token: getToken(),
     });
   };
+
+  useEffect(() => {
+    if (reload) {
+      form.resetFields();
+    }
+  }, [reload]);
 
   return (
     <>
@@ -56,7 +64,7 @@ const PopupCreateCategory = (props) => {
           </Space>
         }
       >
-        <Form layout="vertical" hideRequiredMark>
+        <Form layout="vertical" hideRequiredMark form={form}>
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item
@@ -102,6 +110,7 @@ const PopupCreateCategory = (props) => {
 const mapStateToProp = (state) => {
   return {
     createVisible: state.category.createVisible,
+    reload: state.category.reload,
   };
 };
 

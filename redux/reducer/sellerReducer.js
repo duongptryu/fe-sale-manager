@@ -105,6 +105,7 @@ export const sellerReducer = (state = initSellerState, action) => {
       return {
         ...state,
         loading: false,
+        reload: false,
         err:
           action.response.response.status +
           " " +
