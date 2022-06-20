@@ -348,7 +348,7 @@ const Order = (props) => {
               >
                 <Option value="0">Tất cả</Option>;
                 {categories &&
-                  categories.map((e) => {
+                  categories.map((e, index) => {
                     return (
                       <Option value={e.id} key={index}>
                         {e.name} [{e.kg_for_bag} Kg]

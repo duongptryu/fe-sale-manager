@@ -155,9 +155,9 @@ const PopupUpdateOrder = (props) => {
                   }
                 >
                   {categories &&
-                    categories.map((e) => {
+                    categories.map((e, index) => {
                       return (
-                        <Option value={e.id}>
+                        <Option value={e.id} key={index}>
                           {e.name} [{e.kg_for_bag} Kg]
                         </Option>
                       );
