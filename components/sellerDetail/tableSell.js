@@ -127,7 +127,9 @@ const TableSell = (props) => {
   }, [reload]);
 
   useEffect(() => {
-    fetchData();
+    if (id != undefined) {
+      fetchData();
+    }
   }, [id]);
 
   useEffect(() => {

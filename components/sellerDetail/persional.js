@@ -50,4 +50,5 @@ const mapDispatchToProp = (dispath) => ({
   },
 });
 
+
 export default connect(mapStateToProp, mapDispatchToProp)(PersionSeller);

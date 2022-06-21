@@ -63,7 +63,9 @@ const TablePayment = (props) => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (id != undefined) {
+      fetchData();
+    }
   }, [id, reloadUpdate]);
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { categoryReducer, initCateState } from "./categoryReducer";
 import { initOrderState, orderReducer } from "./orderReducer";
 import { initPaymentState, paymentReducer } from "./paymentReducer";
 import { initSellerState, sellerReducer } from "./sellerReducer";
+import { initStatisticState, statisticReducer } from "./statistic";
 
 export const initRootState = {
   authen: { ...initAuthenState },
@@ -11,6 +12,7 @@ export const initRootState = {
   seller: { ...initSellerState },
   order: { ...initOrderState },
   payment: { ...initPaymentState },
+  statistic: { ...initStatisticState },
 };
 
 export const rootReducer = combineReducers({
@@ -19,4 +21,5 @@ export const rootReducer = combineReducers({
   seller: sellerReducer,
   order: orderReducer,
   payment: paymentReducer,
+  statistic: statisticReducer,
 });

@@ -4,6 +4,7 @@ import { watcherCategory } from "./category";
 import { watcherOrder } from "./order";
 import { watcherPayment } from "./payment";
 import { watcherSaller } from "./seller";
+import { watcherStatistic } from "./statistic";
 
 export function* rootSaga() {
   yield all([
@@ -12,5 +13,6 @@ export function* rootSaga() {
     ...watcherSaller,
     ...watcherOrder,
     ...watcherPayment,
+    ...watcherStatistic,
   ]);
 }
