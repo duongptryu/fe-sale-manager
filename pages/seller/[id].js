@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 const DetailSeller = (props) => {
   const router = useRouter();
   const { id } = router.query;
-  const { errPayment, notiPayment } = props;
+  const { errPayment, notiPayment, errOrder, notiOrder } = props;
 
   useEffect(() => {
     if (errPayment != "" && errPayment != undefined) {
@@ -31,6 +31,22 @@ const DetailSeller = (props) => {
       });
     }
   }, [notiPayment]);
+
+  useEffect(() => {
+    if (errOrder != "" && errOrder != undefined) {
+      return notification.error({
+        message: errOrder,
+      });
+    }
+  }, [errOrder]);
+
+  useEffect(() => {
+    if (notiOrder != "" && notiOrder != undefined) {
+      return notification.success({
+        message: notiOrder,
+      });
+    }
+  }, [notiOrder]);
 
   return (
     <LayoutC one={"/ Người bán"} two="Chi tiết">
@@ -71,6 +87,8 @@ const mapStateToProp = (state) => {
     loading: state.order.loading,
     errPayment: state.payment.err,
     notiPayment: state.payment.noti,
+    errOrder: state.order.err,
+    notiOrder: state.order.noti,
   };
 };
 

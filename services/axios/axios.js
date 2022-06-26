@@ -40,6 +40,14 @@ export const patchAPI = (url, id, data, token) => {
   });
 };
 
+export const deleteAPI = (url, id, token) => {
+  return axios.delete(gateway + url + "/" + id, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+};
+
 function objectToQueryString(obj) {
   var str = [];
   for (var p in obj)

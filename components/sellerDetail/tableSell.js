@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
   ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
+  ACT_DELETE_ORDER_REQUEST,
   ACT_GET_ORDER_REQUEST,
   ACT_GET_ORDER_WITHOUT_PAGING_REQUEST,
 } from "../../redux/action/order";
@@ -48,6 +49,8 @@ const TableSell = (props) => {
     onChangeOrderVisibleUpdate,
     onFetchDataOrder,
     onPaymentOrder,
+    onDeleteOrder,
+    reloadOrder,
   } = props;
 
   var today = new Date();
@@ -127,6 +130,14 @@ const TableSell = (props) => {
   }, [reload]);
 
   useEffect(() => {
+    if (reloadOrder) {
+      setSelectedRowKeys([]);
+      setTotalMoney(0);
+      fetchData();
+    }
+  }, [reloadOrder]);
+
+  useEffect(() => {
     if (id != undefined) {
       fetchData();
     }
@@ -185,6 +196,13 @@ const TableSell = (props) => {
       list_sale_id: selectedRowKeys,
       payment_date: new Date(),
       note: note,
+      token: getToken(),
+    });
+  };
+
+  const onDelete = (data) => {
+    onDeleteOrder({
+      id: data.id,
       token: getToken(),
     });
   };
@@ -302,8 +320,9 @@ const TableSell = (props) => {
             </Button>
             <Popconfirm
               title="Chắc chắn xóa"
-              // onConfirm={confirm}
-              onVisibleChange={() => console.log("visible change")}
+              onConfirm={() => {
+                onDelete(data);
+              }}
             >
               <Button type="primary" size="small" danger>
                 Xóa
@@ -520,6 +539,7 @@ const mapStateToProp = (state) => {
     categories: state.category.categories,
     orders: state.order.orders,
     reload: state.payment.reload,
+    reloadOrder: state.order.reload,
     paymentLoading: state.payment.loading,
   };
 };
@@ -532,6 +552,9 @@ const mapDispatchToProp = (dispath) => ({
   },
   onPaymentOrder: (payload) => {
     dispath({ type: ACT_CREATE_PAYMENT_REQUEST, payload });
+  },
+  onDeleteOrder: (payload) => {
+    dispath({ type: ACT_DELETE_ORDER_REQUEST, payload });
   },
 });
 

@@ -24,6 +24,7 @@ import {
   ACT_CHANGE_CREATE_ORDER_VISIBLE_STATE,
   ACT_CHANGE_ORDER_NOTI,
   ACT_CHANGE_UPDATE_ORDER_VISIBLE_STATE,
+  ACT_DELETE_ORDER_REQUEST,
   ACT_GET_ORDER_REQUEST,
   ACT_GET_ORDER_WITHOUT_PAGING_REQUEST,
 } from "../../redux/action/order";
@@ -58,6 +59,7 @@ const Order = (props) => {
     errPayment,
     notiPayment,
     reloadPayment,
+    onDeleteOrder,
   } = props;
   const [date, setDate] = useState(today);
   const [name, setName] = useState("");
@@ -190,6 +192,13 @@ const Order = (props) => {
     });
   };
 
+  const onDelete = (data) => {
+    onDeleteOrder({
+      id: data.id,
+      token: getToken(),
+    });
+  };
+
   const columns = [
     {
       title: "STT",
@@ -302,11 +311,7 @@ const Order = (props) => {
             >
               Sửa
             </Button>
-            <Popconfirm
-              title="Chắc chắn xóa"
-              // onConfirm={confirm}
-              onVisibleChange={() => console.log("visible change")}
-            >
+            <Popconfirm title="Chắc chắn xóa" onConfirm={() => onDelete(data)}>
               <Button type="primary" size="small" danger>
                 Xóa
               </Button>
@@ -531,6 +536,9 @@ const mapDispatchToProp = (dispath) => ({
   },
   onPaymentOrder: (payload) => {
     dispath({ type: ACT_CREATE_PAYMENT_REQUEST, payload });
+  },
+  onDeleteOrder: (payload) => {
+    dispath({ type: ACT_DELETE_ORDER_REQUEST, payload });
   },
 });
 

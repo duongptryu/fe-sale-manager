@@ -4,6 +4,9 @@ import {
   ACT_CREATE_ORDER_FAILURE,
   ACT_CREATE_ORDER_REQUEST,
   ACT_CREATE_ORDER_SUCCESS,
+  ACT_DELETE_ORDER_FAILURE,
+  ACT_DELETE_ORDER_REQUEST,
+  ACT_DELETE_ORDER_SUCCESS,
   ACT_GET_ORDER_FAILURE,
   ACT_GET_ORDER_REQUEST,
   ACT_GET_ORDER_SUCCESS,
@@ -151,6 +154,31 @@ export const orderReducer = (state = initOrderState, action) => {
           " " +
           action.response.response.data.message,
       };
+
+    case ACT_DELETE_ORDER_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        err: "",
+        noti: "",
+      };
+    case ACT_DELETE_ORDER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        reload: true,
+        noti: "Xóa thành công",
+      };
+    case ACT_DELETE_ORDER_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        err:
+          action.response.response.status +
+          " " +
+          action.response.response.data.message,
+      };
+
     default:
       return state;
   }
