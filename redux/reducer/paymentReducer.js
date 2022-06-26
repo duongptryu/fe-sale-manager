@@ -16,6 +16,7 @@ export const initPaymentState = {
   loading: false,
   payment: null,
   err: "",
+  noti: "",
   reload: false,
   reloadUpdate: false,
   histories: [],
@@ -36,6 +37,7 @@ export const paymentReducer = (state = initPaymentState, action) => {
         loading: true,
         reload: false,
         err: "",
+        noti: "",
       };
     case ACT_CREATE_PAYMENT_SUCCESS:
       return {

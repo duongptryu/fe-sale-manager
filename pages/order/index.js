@@ -32,6 +32,7 @@ import { ACT_GET_SELLER_WITHOUT_PAGING_REQUEST } from "../../redux/action/seller
 import { getToken } from "../../services/utils/const";
 import { ACT_GET_CATEGORY_REQUEST } from "../../redux/action/category";
 import { render } from "react-dom";
+import { ACT_CREATE_PAYMENT_REQUEST } from "../../redux/action/payment";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -53,6 +54,10 @@ const Order = (props) => {
     noti,
     categories,
     reload,
+    onPaymentOrder,
+    errPayment,
+    notiPayment,
+    reloadPayment,
   } = props;
   const [date, setDate] = useState(today);
   const [name, setName] = useState("");
@@ -142,19 +147,45 @@ const Order = (props) => {
   }, [noti]);
 
   useEffect(() => {
+    if (errPayment != "") {
+      return notification.error({
+        message: errPayment,
+      });
+    }
+  }, [errPayment]);
+
+  useEffect(() => {
+    if (notiPayment != "") {
+      return notification.success({
+        message: notiPayment,
+      });
+    }
+  }, [notiPayment]);
+
+  useEffect(() => {
     onGetOrder({
       name: name,
       cate_id: cateId,
       date: moment(new Date(date)).format(dateFormatSearch),
       token: getToken(),
     });
-  }, [reload]);
+  }, [reload, reloadPayment]);
 
   const onSearch = () => {
     onGetOrder({
       name: name,
       cate_id: cateId,
       date: moment(new Date(date)).format(dateFormatSearch),
+      token: getToken(),
+    });
+  };
+
+  const onPayment = (data) => {
+    onPaymentOrder({
+      user_id: data.user_id,
+      list_sale_id: [data.id],
+      payment_date: new Date(),
+      note: "",
       token: getToken(),
     });
   };
@@ -219,14 +250,24 @@ const Order = (props) => {
     },
     {
       title: "Trạng thái",
-      dataIndex: "is_payment",
       width: "15%",
       key: "is_payment",
       render: (data) => {
-        if (data) {
+        if (data.is_payment) {
           return <Tag color="#2db7f5">Đã thanh toán</Tag>;
         } else {
-          return <Tag color="#cd201f">Chua thanh toán</Tag>;
+          return (
+            <Popconfirm
+              title="Chắc chắn thanh toán"
+              onConfirm={() => {
+                onPayment(data);
+              }}
+            >
+              <Button type="primary" size="small" danger>
+                Chưa thanh toán
+              </Button>
+            </Popconfirm>
+          );
         }
       },
     },
@@ -245,14 +286,6 @@ const Order = (props) => {
       key: "date",
       render: (date) => {
         return moment(date).format(dateFormat);
-      },
-    },
-    {
-      title: "Ngày",
-      dataIndex: "date",
-      key: "date",
-      render: (date) => {
-        return formatDate(date);
       },
     },
     {
@@ -478,6 +511,9 @@ const mapStateToProp = (state) => {
     sellers: state.order.sellers,
     categories: state.category.categories,
     reload: state.order.reload,
+    reloadPayment: state.payment.reload,
+    errPayment: state.payment.err,
+    notiPayment: state.payment.noti,
   };
 };
 
@@ -492,6 +528,9 @@ const mapDispatchToProp = (dispath) => ({
     dispath({ type: ACT_GET_CATEGORY_REQUEST, payload }),
   onGetOrder: (payload) => {
     dispath({ type: ACT_GET_ORDER_WITHOUT_PAGING_REQUEST, payload });
+  },
+  onPaymentOrder: (payload) => {
+    dispath({ type: ACT_CREATE_PAYMENT_REQUEST, payload });
   },
 });
 
