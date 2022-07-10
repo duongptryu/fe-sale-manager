@@ -22,7 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getToken } from "../../services/utils/const";
-import { formatDate } from "../../services/utils/number";
+import { formatDate, formatNumber } from "../../services/utils/number";
 
 const { Title, Text } = Typography;
 
@@ -125,6 +125,30 @@ const Seller = (props) => {
       key: "phone_number",
     },
     {
+      title: "Đã thanh toán (VND)",
+      key: "paid",
+      width: "200px",
+      render: (data) => {
+        return (
+          <Text mark>
+            {formatNumber(data.user_paid_and_un_paid?.money_paid ?? 0)}
+          </Text>
+        );
+      },
+    },
+    {
+      title: "Chưa thanh toán (VND)",
+      key: "unpaid",
+      width: "200px",
+      render: (data) => {
+        return (
+          <Text mark>
+            {formatNumber(data.user_paid_and_un_paid?.money_unpaid ?? 0)}
+          </Text>
+        );
+      },
+    },
+    {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
@@ -137,14 +161,6 @@ const Seller = (props) => {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",
-      render: (date) => {
-        return formatDate(date);
-      },
-    },
-    {
-      title: "Ngày cập nhật",
-      dataIndex: "updated_at",
-      key: "updated_at",
       render: (date) => {
         return formatDate(date);
       },
